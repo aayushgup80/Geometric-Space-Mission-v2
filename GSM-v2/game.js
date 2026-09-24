@@ -222,16 +222,17 @@ window.addEventListener("keyup",e=>{if(e.code==="ArrowLeft"||e.code==="KeyA")key
 
 function holdButton(id,key){
  const b=$(id);
+ if(!b)return;
  const on=e=>{e.preventDefault();keys[key]=true;startMusic()};
  const off=e=>{e.preventDefault();keys[key]=false};
  b.addEventListener("pointerdown",on);b.addEventListener("pointerup",off);b.addEventListener("pointercancel",off);b.addEventListener("pointerleave",off);
 }
 holdButton("left","left");holdButton("right","right");holdButton("fire","fire");
-$("ability").addEventListener("pointerdown",e=>{e.preventDefault();ability()});
-$("start").addEventListener("click",()=>startGame());
-$("redeem").addEventListener("click",redeem);
-$("logout").addEventListener("click",async()=>{await sb.auth.signOut();location.replace("login.html")});
-$("profileBtn").addEventListener("click",()=>window.dispatchEvent(new CustomEvent("gsm-profile",{detail:{user,profile,crix,mtokens}})));
+const abilityButton=$("ability"); if(abilityButton) abilityButton.addEventListener("pointerdown",e=>{e.preventDefault();ability()});
+const startButton=$("start"); if(startButton) startButton.addEventListener("click",()=>startGame());
+const redeemButton=$("redeem"); if(redeemButton) redeemButton.addEventListener("click",redeem);
+const logoutButton=$("logout"); if(logoutButton) logoutButton.addEventListener("click",async()=>{await sb.auth.signOut();location.replace("login.html")});
+const profileButton=$("profileBtn"); if(profileButton) profileButton.addEventListener("click",()=>window.dispatchEvent(new CustomEvent("gsm-profile",{detail:{user,profile,crix,mtokens}})));
 
 (async()=>{try{if(await loadAccount()){resize();draw()}}catch(e){console.error(e);location.replace("login.html")}})();
 })();

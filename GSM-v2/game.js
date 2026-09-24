@@ -28,7 +28,7 @@ async function loadAccount(u,username=""){
  const {data:items}=await supabase.from("game_items").select("*").eq("is_shop_visible",true);
  if(items?.length) window.GSM_CATALOG=items;
  applyCatalogLoadout();
- $("auth").style.display="none";$("app").style.display="block";resize();renderMissionInfo();
+ $("app").style.display="block";resize();renderMissionInfo();
 }
 async function saveCurrencies(){
  const {data,error}=await supabase.from("player_profiles").update({crix, m_tokens:mtokens, updated_at:new Date().toISOString()}).eq("id",user.id).select().single();
@@ -43,8 +43,8 @@ function applyCatalogLoadout(){
  const w=catalog.find(x=>x.id===cfg.weapon), s=catalog.find(x=>x.id===cfg.ship), p=catalog.find(x=>x.id===cfg.pilot);
  if(w?.stats){cfg.damage=Number(w.stats.damage||cfg.damage);cfg.fireDelay=Number(w.stats.fireDelay||cfg.fireDelay)}
  if(s?.stats){cfg.speed=Number(s.stats.speed||cfg.speed);lives=Number(s.stats.lives||lives)}
- if(p?.stats?.ability) cfg.pilot=p.name.toLowerCase().replace(/[^a-z0-9]+/g,"_");
- if(w?.stats?.dual) cfg.weapon += "_twin";
+ if(p?.stats?.ability) cfg.pilot=p.id;
+ cfg.dual=Boolean(w?.stats?.dual);
 }
 function renderMissionInfo(){ $("missionInfo").innerHTML=`LEVEL <b>${level}</b><br>Difficulty <b>${(1+level*.12).toFixed(2)}x</b><br>Ship <b>${cfg.ship}</b> · Weapon <b>${cfg.weapon}</b> · Pilot <b>${cfg.pilot}</b><br><span style="color:#00eaff">Move: A/D or ←/→ · Fire: SPACE · Ability: E</span>`; }
 
@@ -53,8 +53,8 @@ function startGame(){resetGame();running=true;paused=false;$("overlay").style.di
 function endGame(){running=false;const reward=Math.max(1,Math.floor(score*.05*cfg.reward));crix+=reward;saveCurrencies();showOverlay("MISSION COMPLETE",`SCORE <b>${Math.floor(score).toLocaleString()}</b><br>CRIX EARNED <b style="color:#ffd166">+${reward}</b><br>LEVEL REACHED <b>${level}</b>`,"REPLAY MISSION")}
 
 const keys={};window.addEventListener("keydown",e=>{keys[e.code]=true;if(["Space","ArrowLeft","ArrowRight"].includes(e.code))e.preventDefault();if(e.code==="KeyP"&&running){paused=!paused;if(!paused){last=performance.now();requestAnimationFrame(loop)}}if(e.code==="KeyE"&&running)ability()});window.addEventListener("keyup",e=>keys[e.code]=false);
-function shoot(){if(shotTimer>0||!running)return;shotTimer=cfg.fireDelay;bullets.push({x:player.x,y:player.y-22,v:620,r:4,d:cfg.damage});if(cfg.weapon.includes("twin"))bullets.push({x:player.x-12,y:player.y-15,v:620,r:3,d:cfg.damage*.7},{x:player.x+12,y:player.y-15,v:620,r:3,d:cfg.damage*.7})}
-function ability(){if(abilityTimer>0||!running)return;abilityTimer=cfg.abilityCooldown;if(cfg.pilot.includes("luuk")){lives=Math.min(5,lives+1);toast("BATTLE MEDITATION")}else{for(const e of enemies)e.hp-=cfg.damage*3;toast("SPECIAL ABILITY")}
+function shoot(){if(shotTimer>0||!running)return;shotTimer=cfg.fireDelay;bullets.push({x:player.x,y:player.y-22,v:620,r:4,d:cfg.damage});if(cfg.dual)bullets.push({x:player.x-12,y:player.y-15,v:620,r:3,d:cfg.damage*.7},{x:player.x+12,y:player.y-15,v:620,r:3,d:cfg.damage*.7})}
+function ability(){if(abilityTimer>0||!running)return;abilityTimer=cfg.abilityCooldown;if(cfg.pilot==="pilot_luuk"){lives=Math.min(5,lives+1);toast("BATTLE MEDITATION")}else{for(const e of enemies)e.hp-=cfg.damage*3;toast("SPECIAL ABILITY")}
  setHud()}
 function spawnEnemy(){const elite=Math.random()<Math.min(.2,level*.012);const r=10+Math.random()*13;const hp=(18+level*4)*(elite?3:1);enemies.push({x:r+Math.random()*(canvas.width-r*2),y:-r,r,hp,max:hp,v:70+level*7+(elite?35:0),elite})}
 function spawnBoss(){boss={x:canvas.width/2,y:90,r:38,hp:550+level*120,max:550+level*120,v:75};$("boss").style.display="block";$("bossName").textContent="GEOMETRIC WARDEN // LV "+level}
@@ -85,10 +85,7 @@ $("start").onclick=()=>{if(!running)startGame()};$("logout").onclick=async()=>{a
 for(const [id,code] of [["left","ArrowLeft"],["right","ArrowRight"]]){const b=$(id);b.onpointerdown=()=>keys[code]=true;b.onpointerup=()=>keys[code]=false;b.onpointerleave=()=>keys[code]=false}
 $("fire").onpointerdown=()=>keys.Space=true;$("fire").onpointerup=()=>keys.Space=false;$("ability").onclick=ability;
 
-$("login").onsubmit=async e=>{e.preventDefault();msg($("lm"),"AUTHENTICATING...","#ffd166");const {data,error}=await supabase.auth.signInWithPassword({email:$("le").value.trim(),password:$("lp").value});if(error)return msg($("lm"),error.message);try{await loadAccount(data.user)}catch(x){msg($("lm"),x.message)}};
-$("signup").onsubmit=async e=>{e.preventDefault();msg($("sm"),"CREATING ACCOUNT...","#ffd166");const username=$("su").value.trim();const {data,error}=await supabase.auth.signUp({email:$("se").value.trim(),password:$("sp").value,options:{data:{username}}});if(error)return msg($("sm"),error.message);if(!data.session){return msg($("sm"),"Account created. Confirm your email, then sign in.","#ffd166")}await loadAccount(data.user,username)};
-$("switch").onclick=()=>{const a=$("login"),b=$("signup");const signup=b.style.display==="none";a.style.display=signup?"none":"block";b.style.display=signup?"block":"none";$("switch").textContent=signup?"Already have an account? Sign in":"Need an account? Create one"};
 
-(async()=>{const {data:{session}}=await supabase.auth.getSession();if(session?.user){try{await loadAccount(session.user)}catch(e){$("auth").style.display="grid";msg($("lm"),e.message)}}})();
+(async()=>{const {data:{session}}=await supabase.auth.getSession();if(!session?.user){location.replace("login.html");return}try{await loadAccount(session.user)}catch(e){console.error(e);location.replace("login.html")}})();
 
 })();

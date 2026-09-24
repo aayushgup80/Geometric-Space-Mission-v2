@@ -228,7 +228,9 @@ body{font-family:Inter,Segoe UI,Arial,sans-serif;color:#eef8ff}
   <div class="fade-out"></div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
+const authClient=window.supabase.createClient("https://ccdllfswfhtgcolkugbz.supabase.co","sb_publishable_LPd-zxWUKM8c1p2P9sbbuA_EmhtqQr5");
 const loader=document.getElementById("loader");
 const stars=document.getElementById("stars");
 
@@ -265,9 +267,7 @@ function launch(){
   playSound(clickSound);
   loader.classList.add("cracking");
 
-  setTimeout(()=>{
-    window.location.href="lobby.html";
-  },1150);
+  setTimeout(async()=>{const {data:{session}}=await authClient.auth.getSession();window.location.href=session?.user?"lobby.html":"login.html";},1150);
 }
 
 document.getElementById("enter").addEventListener("click",launch);

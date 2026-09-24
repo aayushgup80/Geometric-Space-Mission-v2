@@ -4,7 +4,7 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;800;900&display=swap');
 *{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#02040a;color:#e9fbff;font-family:Orbitron,system-ui}
-body{display:grid;place-items:center}.shell{position:relative;width:min(1280px,100vw);height:min(900px,100vh);background:#02040a}
+body{display:grid;place-items:center}.shell{position:relative;width:min(940px,94vw);height:min(760px,92vh);background:#02040a;border:2px solid rgba(0,234,255,.42);box-shadow:0 0 0 1px rgba(255,255,255,.05) inset,0 0 45px rgba(0,234,255,.12),0 25px 80px rgba(0,0,0,.65);overflow:hidden}
 canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
 .hud{position:absolute;z-index:5;top:0;left:0;right:0;height:58px;padding:8px 18px;display:flex;justify-content:space-between;align-items:center;background:linear-gradient(#02040af2,#02040a99,transparent);pointer-events:none}
 .hud .row{display:flex;gap:18px;align-items:center}.metric{font-size:11px;color:#8295aa}.metric b{color:#00eaff;font-size:13px}.brand{font-weight:900;letter-spacing:.12em;color:#00eaff}.brand small{display:block;font-size:7px;color:#657991;letter-spacing:.2em}
@@ -22,5 +22,5 @@ canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
 <div class="toast" id="temp-message-container"></div>
 <div class="menu" id="message-box"><div class="card"><div class="eyebrow">MISSION CONTROL // COMBAT SIMULATION</div><div class="title" id="menu-title">MISSION READY</div><div class="info" id="menu-info">Initialize combat systems.</div><button class="btn" id="start-button">LAUNCH MISSION</button></div></div>
 <div class="controls"><div class="cluster"><button class="ctrl" id="move-left-btn">◀</button><button class="ctrl" id="move-right-btn">▶</button></div><div class="cluster"><button class="ctrl abilityBtn" id="ability-btn">⚡</button><button class="ctrl fire" id="fire-btn">FIRE</button></div></div>
-<audio id="uiHover" preload="auto" src="sounds/button-hover.mp3"></audio><audio id="uiClick" preload="auto" src="sounds/button-click.mp3"></audio>
+<audio id="uiHover" preload="auto" src="sounds/button-hover.mp3"></audio><audio id="uiClick" preload="auto" src="sounds/button-click.mp3"></audio><audio id="bulletShoot" preload="auto" src="sounds/bullet shoot.wav"></audio><audio id="hullDamage" preload="auto" src="sounds/damage_hull_from_bullet.wav"></audio>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.83.0/dist/umd/supabase.min.js"></script><script src="game.js"></script></div></body></html>

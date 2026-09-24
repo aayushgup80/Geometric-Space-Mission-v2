@@ -6,7 +6,7 @@ const $=id=>document.getElementById(id);
 let user=null, profile=null, running=false, paused=false, last=0, score=0, level=1, lives=3, crix=0, mtokens=0;
 let player, bullets=[], enemies=[], particles=[], stars=[], wave=0, spawnTimer=0, shotTimer=0, abilityTimer=0, boss=null;
 const cfg={speed:330,damage:12,fireDelay:.22,abilityCooldown:10,ship:"default",weapon:"default_blaster",pilot:"none",reward:1};
-const canvas=$("game"),ctx=canvas.getContext("2d");
+const canvas=$("game"),ctx=canvas.getContext("2d");\nconst gameplayMusic=new Audio("sounds/gameplay_music.flac"); gameplayMusic.loop=true; gameplayMusic.volume=.28;\nfunction startGameplayMusic(){gameplayMusic.play().catch(()=>{});}\nwindow.addEventListener("pointerdown",startGameplayMusic,{once:true}); window.addEventListener("keydown",startGameplayMusic,{once:true});\n
 
 function resize(){canvas.width=canvas.clientWidth;canvas.height=canvas.clientHeight;if(player){player.y=canvas.height-75;player.x=Math.min(player.x,canvas.width-25)}} window.addEventListener("resize",resize);
 function msg(el,t,c="#ff7180"){el.textContent=t;el.style.color=c}

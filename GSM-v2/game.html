@@ -24,12 +24,7 @@ canvas{width:100%;height:100%;display:block}.hud{position:absolute;top:0;left:0;
 </style>
 </head>
 <body>
-<div id="auth"><div class="card">
-<div class="logo">GSM // V2</div><div class="sub">SECURE MISSION ACCESS</div>
-<form id="login"><input id="le" type="email" placeholder="Email" required><input id="lp" type="password" placeholder="Password" required><div id="lm" class="msg"></div><button class="authbtn">ENTER MISSION CONTROL</button></form>
-<form id="signup" style="display:none"><input id="su" placeholder="Pilot callsign" minlength="3" maxlength="24" required><input id="se" type="email" placeholder="Email" required><input id="sp" type="password" placeholder="Password (8+ characters)" minlength="8" required><div id="sm" class="msg"></div><button class="authbtn">CREATE PILOT ACCOUNT</button></form>
-<button id="switch" class="switch">Need an account? Create one</button></div></div>
-<div id="app">
+<div id="app" style="display:block">
 <div class="top"><div class="brand">GEOMETRIC SPACE MISSION<small>V2 // MISSION CONTROL</small></div><div class="account"><span id="pilotName"></span><button id="logout" class="logout">SIGN OUT</button></div></div>
 <div id="gameWrap"><div class="game"><canvas id="game"></canvas>
 <div class="hud"><div>SCORE <span id="score">0</span> &nbsp; LVL <span id="level">1</span> &nbsp; LIVES <span id="lives">3</span></div><div>₢ <span id="crix">0</span> &nbsp; <span class="mt">M</span> <span id="mtokens" class="mt">0</span></div></div>

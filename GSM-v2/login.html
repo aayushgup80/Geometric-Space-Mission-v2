@@ -57,15 +57,15 @@ form{position:relative}.field{margin-bottom:13px}.field label{display:block;colo
 </main>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-const supabase=window.supabase.createClient("https://ccdllfswfhtgcolkugbz.supabase.co","sb_publishable_LPd-zxWUKM8c1p2P9sbbuA_EmhtqQr5");
+const sb=window.supabase.createClient("https://ccdllfswfhtgcolkugbz.supabase.co","sb_publishable_LPd-zxWUKM8c1p2P9sbbuA_EmhtqQr5");
 const $=id=>document.getElementById(id);
 function msg(el,text,ok=false){el.textContent=text;el.className="msg"+(ok?" ok":"")}
-async function boot(){const {data:{session}}=await supabase.auth.getSession();if(session?.user)location.replace("lobby.html")}
+async function boot(){const {data:{session}}=await sb.auth.getSession();if(session?.user)location.replace("lobby.html")}
 boot();
 $("loginTab").onclick=()=>{ $("loginTab").classList.add("active");$("signupTab").classList.remove("active");$("loginForm").style.display="block";$("signupForm").style.display="none" };
 $("signupTab").onclick=()=>{ $("signupTab").classList.add("active");$("loginTab").classList.remove("active");$("loginForm").style.display="none";$("signupForm").style.display="block" };
-$("loginForm").onsubmit=async e=>{e.preventDefault();msg($("loginMsg"),"AUTHENTICATING...");const {data,error}=await supabase.auth.signInWithPassword({email:$("loginEmail").value.trim(),password:$("loginPassword").value});if(error)return msg($("loginMsg"),error.message);msg($("loginMsg"),"ACCESS GRANTED // LAUNCHING...",true);setTimeout(()=>location.replace("lobby.html"),350)};
-$("signupForm").onsubmit=async e=>{e.preventDefault();const username=$("username").value.trim();msg($("signupMsg"),"INITIALIZING PILOT PROFILE...");const {data,error}=await supabase.auth.signUp({email:$("signupEmail").value.trim(),password:$("signupPassword").value,options:{data:{username}}});if(error)return msg($("signupMsg"),error.message);if(!data.session)return msg($("signupMsg"),"ACCOUNT CREATED // CHECK YOUR EMAIL, THEN SIGN IN.",true);msg($("signupMsg"),"PILOT INITIALIZED // LAUNCHING...",true);setTimeout(()=>location.replace("lobby.html"),350)};
+$("loginForm").onsubmit=async e=>{e.preventDefault();msg($("loginMsg"),"AUTHENTICATING...");const {data,error}=await sb.auth.signInWithPassword({email:$("loginEmail").value.trim(),password:$("loginPassword").value});if(error)return msg($("loginMsg"),error.message);msg($("loginMsg"),"ACCESS GRANTED // LAUNCHING...",true);setTimeout(()=>location.replace("lobby.html"),350)};
+$("signupForm").onsubmit=async e=>{e.preventDefault();const username=$("username").value.trim();msg($("signupMsg"),"INITIALIZING PILOT PROFILE...");const {data,error}=await sb.auth.signUp({email:$("signupEmail").value.trim(),password:$("signupPassword").value,options:{data:{username}}});if(error)return msg($("signupMsg"),error.message);if(!data.session)return msg($("signupMsg"),"ACCOUNT CREATED // CHECK YOUR EMAIL, THEN SIGN IN.",true);msg($("signupMsg"),"PILOT INITIALIZED // LAUNCHING...",true);setTimeout(()=>location.replace("lobby.html"),350)};
 const c=$("stars"),x=c.getContext("2d");function size(){c.width=innerWidth*devicePixelRatio;c.height=innerHeight*devicePixelRatio;x.scale(devicePixelRatio,devicePixelRatio)}size();addEventListener("resize",()=>{x.setTransform(1,0,0,1,0,0);size()});
 const stars=Array.from({length:180},()=>({x:Math.random()*innerWidth,y:Math.random()*innerHeight,r:.3+Math.random()*1.6,v:.08+Math.random()*.28}));
 function draw(){x.clearRect(0,0,innerWidth,innerHeight);for(const s of stars){s.y+=s.v;if(s.y>innerHeight)s.y=-2;x.fillStyle="rgba(170,230,255,.55)";x.fillRect(s.x,s.y,s.r,s.r)}requestAnimationFrame(draw)}draw();

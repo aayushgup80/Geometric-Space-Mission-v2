@@ -373,15 +373,22 @@ document.querySelectorAll("[data-name]").forEach(el=>{
   el.addEventListener("click",()=>notify(el.dataset.name));
 });
 document.getElementById("play").addEventListener("click",()=>{ playSound(uiClick); startLobbyMusic(); window.location.href="game.html"; });
+document.querySelector(".profile").addEventListener("click",async()=>{await client?.auth.signOut();window.location.href="login.html"});
 document.addEventListener("keydown",e=>{
   if(e.key==="Enter") document.getElementById("play").click();
 });
 async function requireAuth(){
  const client=window.supabase.createClient("https://ccdllfswfhtgcolkugbz.supabase.co","sb_publishable_LPd-zxWUKM8c1p2P9sbbuA_EmhtqQr5");
  const {data:{session}}=await client.auth.getSession();
- if(!session?.user){window.location.href="loader.html";return null}
- const {data:profile,error}=await client.from("player_profiles").select("username,crix,m_tokens").eq("id",session.user.id).single();
+ if(!session?.user){window.location.href="login.html";return null}
+ let {data:profile,error}=await client.from("player_profiles").select("username,crix,m_tokens").eq("id",session.user.id).maybeSingle();
  if(error){console.error(error);return session.user}
+ if(!profile){
+   const username=session.user.user_metadata?.username||session.user.email.split("@")[0];
+   const created=await client.from("player_profiles").insert({id:session.user.id,username,crix:10,m_tokens:0}).select("username,crix,m_tokens").single();
+   if(created.error){console.error(created.error);return session.user}
+   profile=created.data;
+ }
  document.getElementById("crixBalance").textContent=Number(profile.crix||0).toLocaleString();
  document.getElementById("mtokenBalance").textContent=Number(profile.m_tokens||0).toLocaleString();
  const status=document.querySelector(".status");

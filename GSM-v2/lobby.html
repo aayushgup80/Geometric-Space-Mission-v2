@@ -333,19 +333,15 @@ function playSound(audio){
 }
 
 function startLobbyMusic(){
-  if(musicStarted)return;
-  musicStarted=true;
   lobbyMusic.volume=0.34;
-  lobbyMusic.play().catch(()=>{});
+  lobbyMusic.play().then(()=>{musicStarted=true}).catch(()=>{musicStarted=false});
 }
+// Try immediately; browsers that block autoplay will start it on the first interaction.
+startLobbyMusic();
 
-document.querySelectorAll("button").forEach(button=>{
-  button.addEventListener("mouseenter",()=>playSound(uiHover));
-  button.addEventListener("click",()=>{
-    playSound(uiClick);
-    startLobbyMusic();
-  });
-});
+const interactiveSelector="button,a,[role=\"button\"]";
+document.addEventListener("mouseover",e=>{const el=e.target.closest(interactiveSelector);if(el)playSound(uiHover)});
+document.addEventListener("click",e=>{const el=e.target.closest(interactiveSelector);if(el){playSound(uiClick);startLobbyMusic()}});
 
 // Browser autoplay rules normally require a user gesture.
 // Start the lobby music on the first click/tap/key interaction.

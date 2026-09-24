@@ -373,7 +373,7 @@ document.querySelectorAll("[data-name]").forEach(el=>{
   el.addEventListener("click",()=>notify(el.dataset.name));
 });
 document.getElementById("play").addEventListener("click",()=>{ playSound(uiClick); startLobbyMusic(); window.location.href="game.html"; });
-document.querySelector(".profile").addEventListener("click",async()=>{await client?.auth.signOut();window.location.href="login.html"});
+document.querySelector(".profile").addEventListener("click",async()=>{const c=window.supabase.createClient("https://ccdllfswfhtgcolkugbz.supabase.co","sb_publishable_LPd-zxWUKM8c1p2P9sbbuA_EmhtqQr5");await c.auth.signOut();window.location.href="login.html"});
 document.addEventListener("keydown",e=>{
   if(e.key==="Enter") document.getElementById("play").click();
 });

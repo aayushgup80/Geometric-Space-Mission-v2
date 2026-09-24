@@ -357,7 +357,7 @@ for(let i=0;i<90;i++){
   s.style.opacity=(.12+Math.random()*.35).toFixed(2);
   stars.appendChild(s);
 }
-const toast=document.getElementById("toast");
+window.gsmSession=null;window.gsmProfile=null;\nconst toast=document.getElementById("toast");
 let timer;
 function notify(name){
   toast.textContent=name.toUpperCase()+"  //  COMING SOON";
@@ -369,7 +369,15 @@ document.querySelectorAll("[data-name]").forEach(el=>{
   el.addEventListener("click",()=>notify(el.dataset.name));
 });
 document.getElementById("play").addEventListener("click",()=>{ playSound(uiClick); startLobbyMusic(); window.location.href="game.html"; });
-document.querySelector(".profile").addEventListener("click",async()=>{const c=window.supabase.createClient("https://ccdllfswfhtgcolkugbz.supabase.co","sb_publishable_LPd-zxWUKM8c1p2P9sbbuA_EmhtqQr5");await c.auth.signOut();window.location.href="login.html"});
+const profileModal=document.createElement("div");
+profileModal.id="profileModal";
+profileModal.style.cssText="position:fixed;inset:0;z-index:50;display:none;place-items:center;background:#000b;backdrop-filter:blur(8px)";
+profileModal.innerHTML=\`<div style="width:min(440px,90vw);padding:26px;background:#07101c;border:1px solid #8fe8ff55;box-shadow:0 0 60px #00eaff22;color:#edf5ff;font-family:Inter,Segoe UI,Arial,sans-serif"><div style="font-size:11px;letter-spacing:.2em;color:#8fe8ff">PILOT PROFILE</div><div id="profileUsername" style="font-size:24px;font-weight:800;margin:10px 0 18px"></div><div style="font-size:11px;line-height:2;color:#91a5bb">EMAIL<br><b id="profileEmail" style="color:#edf5ff"></b><br><br>PLAYER ID<br><b id="profileId" style="font-size:10px;color:#edf5ff;word-break:break-all"></b><br><br>CRIX <b id="profileCrix"></b> · M-TOKENS <b id="profileTokens"></b></div><button id="closeProfile" style="margin-top:20px;width:100%;padding:11px;background:#10263a;color:#8fe8ff;border:1px solid #8fe8ff55">CLOSE</button></div>\`;
+document.body.appendChild(profileModal);
+function openProfile(){if(!window.gsmSession)return;document.getElementById("profileUsername").textContent=(window.gsmProfile?.username||window.gsmSession.user_metadata?.username||window.gsmSession.email||"PILOT").toUpperCase();document.getElementById("profileEmail").textContent=window.gsmSession.email||"—";document.getElementById("profileId").textContent=window.gsmSession.id;document.getElementById("profileCrix").textContent=Number(window.gsmProfile?.crix||0).toLocaleString();document.getElementById("profileTokens").textContent=Number(window.gsmProfile?.m_tokens||0).toLocaleString();profileModal.style.display="grid"}
+document.querySelector(".profile").addEventListener("click",openProfile);
+document.getElementById("closeProfile").addEventListener("click",()=>profileModal.style.display="none");
+profileModal.addEventListener("click",e=>{if(e.target===profileModal)profileModal.style.display="none"});
 document.addEventListener("keydown",e=>{
   if(e.key==="Enter") document.getElementById("play").click();
 });
@@ -378,7 +386,7 @@ async function requireAuth(){
  const {data:{session}}=await client.auth.getSession();
  if(!session?.user){window.location.href="login.html";return null}
  let {data:profile,error}=await client.from("player_profiles").select("username,crix,m_tokens").eq("id",session.user.id).maybeSingle();
- if(error){console.error(error);return session.user}
+ if(error){console.error(error);window.gsmSession=session.user;window.gsmProfile=profile;\n return session.user}
  if(!profile){
    const username=session.user.user_metadata?.username||session.user.email.split("@")[0];
    const created=await client.from("player_profiles").insert({id:session.user.id,username,crix:10,m_tokens:0}).select("username,crix,m_tokens").single();

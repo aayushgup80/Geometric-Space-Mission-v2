@@ -27,6 +27,7 @@ async function loadAccount(u,username=""){
  if(l){cfg.ship=l.ship_id||"default";cfg.weapon=l.weapon_id||"default_blaster";cfg.pilot=l.pilot_id||"none"}
  const {data:items}=await supabase.from("game_items").select("*").eq("is_shop_visible",true);
  if(items?.length) window.GSM_CATALOG=items;
+ applyCatalogLoadout();
  $("auth").style.display="none";$("app").style.display="block";resize();renderMissionInfo();
 }
 async function saveCurrencies(){
@@ -36,6 +37,14 @@ async function saveCurrencies(){
 async function saveLoadout(loadout){
  await supabase.from("player_loadouts").upsert({player_id:user.id,...loadout,updated_at:new Date().toISOString()});
  Object.assign(cfg,loadout);
+}
+function applyCatalogLoadout(){
+ const catalog=window.GSM_CATALOG||[];
+ const w=catalog.find(x=>x.id===cfg.weapon), s=catalog.find(x=>x.id===cfg.ship), p=catalog.find(x=>x.id===cfg.pilot);
+ if(w?.stats){cfg.damage=Number(w.stats.damage||cfg.damage);cfg.fireDelay=Number(w.stats.fireDelay||cfg.fireDelay)}
+ if(s?.stats){cfg.speed=Number(s.stats.speed||cfg.speed);lives=Number(s.stats.lives||lives)}
+ if(p?.stats?.ability) cfg.pilot=p.name.toLowerCase().replace(/[^a-z0-9]+/g,"_");
+ if(w?.stats?.dual) cfg.weapon += "_twin";
 }
 function renderMissionInfo(){ $("missionInfo").innerHTML=`LEVEL <b>${level}</b><br>Difficulty <b>${(1+level*.12).toFixed(2)}x</b><br>Ship <b>${cfg.ship}</b> · Weapon <b>${cfg.weapon}</b> · Pilot <b>${cfg.pilot}</b><br><span style="color:#00eaff">Move: A/D or ←/→ · Fire: SPACE · Ability: E</span>`; }
 

@@ -14,7 +14,7 @@ async function boot(){try{const {data:{session}}=await sb.auth.getSession();if(!
 function menu(){ $("menu-title").textContent="MISSION READY";$("menu-info").innerHTML="V2 COMBAT SYSTEMS ONLINE<br><br><b>WASD / ARROWS</b> move · <b>SPACE</b> fire · <b>E</b> ability<br>Enemies become faster and tougher as your level rises.<br><br>Weapon damage: <b>"+weapon.damage+"</b> · Fire rate: <b>"+(1/weapon.delay).toFixed(1)+"/s</b>"}
 function reset(){score=0;xp=0;level=1;lives=3;kills=0;killFlash=0;killRotation=0;killHue=185;spawn=.4;fireClock=0;abilityClock=0;invuln=0;bullets=[];enemies=[];sparks=[];player={x:W/2,y:H-92,r:16,max:100,hp:100};stars=Array.from({length:150},()=>({x:Math.random()*W,y:Math.random()*H,s:.4+Math.random()*1.5,v:15+Math.random()*45}));hud()}
 function hud(){$("score-display").textContent=score;$("level-display").textContent=level;$("lives-display").textContent=lives;$("cret-display").textContent=Math.floor(crix);$("xp-display").textContent=xp;$("next-xp-display").textContent=xpNeed(level);$("player-hp-fill").style.width=Math.max(0,player?player.hp/player.max*100:100)+"%";$("ability-bar-fill").style.width=Math.max(0,(1-abilityClock/8)*100)+"%"}
-function toast(t){$("temp-message-container").textContent=t;clearTimeout(toast.t);toast.t=setTimeout(()=>$("temp-message-container").textContent="",850)}
+function toast(t){const el=$("temp-message-container");el.textContent=t;el.classList.add("show");clearTimeout(toast.t);toast.t=setTimeout(()=>el.classList.remove("show"),1100)}
 function scheduleLoop(){if(settings.vsync)requestAnimationFrame(loop);else setTimeout(()=>loop(performance.now()),0)}function launch(){reset();state="RUNNING";pauseOverlay.style.display="none";$("message-box").style.display="none";musicOn();last=performance.now();fpsStamp=last;fpsFrames=0;scheduleLoop()}
 function finish(){state="OVER";pauseOverlay.style.display="none";$("message-box").style.display="grid";$("menu-title").textContent=lives?"MISSION ENDED":"SHIP DESTROYED";$("menu-info").innerHTML="SCORE <b>"+score+"</b> · XP <b>"+xp+"</b> · LEVEL <b>"+level+"</b><br><br>Ready for another sortie?";$("start-button").textContent="LAUNCH AGAIN"}
 function hit(a,b){const dx=a.x-b.x,dy=a.y-b.y;return dx*dx+dy*dy<(a.r+b.r)**2}
@@ -37,7 +37,36 @@ addEventListener("keydown",e=>{if(e.code==="Escape"){if(state==="RUNNING"){state
 const settings={master:+localStorage.gsmMaster||1,music:+localStorage.gsmMusic||.28,bullet:+localStorage.gsmBullet||.7,damage:+localStorage.gsmDamage||1,ui:+localStorage.gsmUI||1,fps:localStorage.gsmFPS==="1",vsync:localStorage.gsmVsync!=="0"};
 function applySettings(){music.volume=settings.master*settings.music;["bulletShoot","hullDamage","uiHover","uiClick"].forEach(id=>{const a=$(id);if(a)a.volume=settings.master*(id==="bulletShoot"?settings.bullet:id==="hullDamage"?settings.damage:settings.ui)});localStorage.gsmMaster=settings.master;localStorage.gsmMusic=settings.music;localStorage.gsmBullet=settings.bullet;localStorage.gsmDamage=settings.damage;localStorage.gsmUI=settings.ui;localStorage.gsmFPS=settings.fps?1:0;localStorage.gsmVsync=settings.vsync?1:0}
 function openSettings(){let p=$("settings-runtime");if(p){p.style.display="grid";return}p=document.createElement("div");p.id="settings-runtime";p.style="position:absolute;z-index:40;inset:0;display:grid;place-items:center;background:rgba(2,4,10,.94);backdrop-filter:blur(8px)";p.innerHTML='<div style="width:min(560px,88%);padding:28px;border:1px solid #00eaff55;background:#030813;box-shadow:0 0 70px #00eaff18"><h2 style="color:#00eaff;margin-top:0">SYSTEM SETTINGS</h2><div id="settings-fields"></div><button class="btn" id="settings-close">BACK</button></div>';$("game-container").appendChild(p);const fields=$("settings-fields");const add=(id,label,val,step)=>{fields.innerHTML+=`<div style="display:grid;grid-template-columns:1fr 150px 42px;gap:10px;align-items:center;margin:14px 0;font-size:9px;color:#a7b9cb"><span>${label}</span><input id="${id}" type="range" min="0" max="100" value="${Math.round(val*100)}" step="${step||1}"><output id="${id}v" style="color:#00eaff;text-align:right"></output></div>`};add("set-master","MASTER VOLUME",settings.master);add("set-music","GAMEPLAY MUSIC",settings.music);add("set-bullet","BULLET SOUND",settings.bullet);add("set-damage","HULL DAMAGE SOUND",settings.damage);add("set-ui","UI SOUNDS",settings.ui);fields.innerHTML+='<label style="display:flex;gap:12px;align-items:center;margin:14px 0;font-size:9px;color:#a7b9cb"><input id="set-fps" type="checkbox"> SHOW FPS</label><label style="display:flex;gap:12px;align-items:center;margin:14px 0;font-size:9px;color:#a7b9cb"><input id="set-vsync" type="checkbox"> FRAME SYNC</label>';const bind=(id,key)=>{const e=$(id),o=$(id+"v");o.textContent=Math.round(settings[key]*100)+"%";e.oninput=()=>{settings[key]=+e.value/100;o.textContent=e.value+"%";applySettings()}};bind("set-master","master");bind("set-music","music");bind("set-bullet","bullet");bind("set-damage","damage");bind("set-ui","ui");$("set-fps").checked=settings.fps;$("set-vsync").checked=settings.vsync;$("set-fps").onchange=e=>{settings.fps=e.target.checked;applySettings()};$("set-vsync").onchange=e=>{settings.vsync=e.target.checked;applySettings()};$("settings-close").onclick=()=>p.style.display="none"}
-applySettings();async function saveMissionAndExit(){try{const {data,error}=await sb.functions.invoke("save-mission",{body:{score,xp,kills}});if(error)throw error;crix=Number(data?.crix??crix);toast("MISSION SAVED // +"+Number(data?.earned_crix||0)+" CRIX");await new Promise(r=>setTimeout(r,450));location.href="lobby.html"}catch(e){console.error(e);toast("SAVE FAILED // "+(e.message||"TRY AGAIN"))}}
+applySettings();async function saveMissionAndExit(){
+  if(state!=="PAUSED") return;
+  const btn=$("save-exit-button");
+  if(btn.dataset.busy==="1") return;
+  btn.dataset.busy="1"; btn.disabled=true; btn.textContent="SAVING...";
+  const info=$("temp-message-container");
+  info.classList.add("show"); info.textContent="UPLOADING MISSION // PLEASE WAIT";
+  try{
+    const {data:{session}}=await sb.auth.getSession();
+    if(!session?.access_token) throw new Error("SESSION EXPIRED — SIGN IN AGAIN");
+    const res=await fetch(URL+"/functions/v1/save-mission",{
+      method:"POST",
+      headers:{"Content-Type":"application/json","Authorization":"Bearer "+session.access_token,"apikey":KEY},
+      body:JSON.stringify({score,xp,kills})
+    });
+    const payload=await res.json().catch(()=>({}));
+    if(!res.ok) throw new Error(payload.error||("SAVE FAILED // HTTP "+res.status));
+    crix=Number(payload.crix??crix);
+    info.textContent="MISSION SAVED // +"+Number(payload.earned_crix||0)+" CRIX";
+    btn.textContent="SAVED ✓";
+    await new Promise(r=>setTimeout(r,650));
+    location.href="lobby.html";
+  }catch(e){
+    console.error("SAVE + EXIT:",e);
+    info.textContent="SAVE FAILED // "+(e.message||"TRY AGAIN");
+    btn.textContent="RETRY SAVE";
+    btn.disabled=false; btn.dataset.busy="0";
+    setTimeout(()=>info.classList.remove("show"),2600);
+  }
+}
 (function(){const s=document.createElement("style");s.textContent="@keyframes gsmKillSpin{to{transform:translate(-50%,-20px) rotate(360deg)}}#game-container:after{display:none!important}";document.head.appendChild(s)})();
 boot();
 })();

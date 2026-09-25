@@ -71,6 +71,32 @@ applySettings();async function saveMissionAndExit(){
     setTimeout(()=>info.classList.remove("show"),2600);
   }
 }
+(function(){
+  const style=document.createElement("style");
+  style.textContent=`
+    html,body,#game-container,#game-container *{cursor:none!important}
+    #gsm-cursor{position:fixed;left:0;top:0;width:30px;height:30px;z-index:9999;pointer-events:none;transform:translate3d(-100px,-100px,0) rotate(45deg);filter:drop-shadow(0 0 7px rgba(255,70,85,.75));transition:transform .035s linear}
+    #gsm-cursor:before{content:"";position:absolute;inset:2px;background:#ff4655;clip-path:polygon(0 0,100% 0,66% 35%,58% 100%,42% 100%,34% 48%,0 35%);box-shadow:0 0 10px #ff4655}
+    #gsm-cursor:after{content:"";position:absolute;left:7px;top:7px;width:8px;height:8px;background:#fff;clip-path:polygon(0 0,100% 0,55% 100%);opacity:.95}
+    .gsm-cursor-trail{position:fixed;width:5px;height:5px;border-radius:50%;background:#ff4655;pointer-events:none;z-index:9998;opacity:.5;box-shadow:0 0 9px #ff4655;animation:gsmCursorFade .34s ease-out forwards}
+    .gsm-cursor-click{position:fixed;width:24px;height:24px;border:2px solid #fff;border-radius:50%;pointer-events:none;z-index:9997;transform:translate(-50%,-50%);animation:gsmCursorClick .38s ease-out forwards}
+    @keyframes gsmCursorFade{to{transform:scale(.1);opacity:0}}
+    @keyframes gsmCursorClick{to{transform:translate(-50%,-50%) scale(2.1);opacity:0}}
+  `;
+  document.head.appendChild(style);
+  document.body.classList.add("gsm-custom-cursor");
+  const cursor=document.createElement("div");cursor.id="gsm-cursor";document.body.appendChild(cursor);
+  let lastTrail=0;
+  addEventListener("pointermove",e=>{
+    cursor.style.transform=`translate3d(${e.clientX-3}px,${e.clientY-3}px,0) rotate(45deg)`;
+    if(performance.now()-lastTrail>34){
+      const t=document.createElement("i");t.className="gsm-cursor-trail";t.style.left=e.clientX+"px";t.style.top=e.clientY+"px";document.body.appendChild(t);setTimeout(()=>t.remove(),360);lastTrail=performance.now();
+    }
+  },{passive:true});
+  addEventListener("pointerdown",e=>{
+    const ring=document.createElement("i");ring.className="gsm-cursor-click";ring.style.left=e.clientX+"px";ring.style.top=e.clientY+"px";document.body.appendChild(ring);setTimeout(()=>ring.remove(),400);
+  },{passive:true});
+})();
 (function(){const s=document.createElement("style");s.textContent="@keyframes gsmKillSpin{to{transform:translate(-50%,-20px) rotate(360deg)}}#game-container:after{display:none!important}";document.head.appendChild(s)})();
 boot();
 })();

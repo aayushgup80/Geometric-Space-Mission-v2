@@ -46,15 +46,18 @@ applySettings();async function saveMissionAndExit(){
   const info=$("temp-message-container");
   info.classList.add("show"); info.textContent="UPLOADING MISSION // PLEASE WAIT";
   try{
-    const {data:{session}}=await sb.auth.getSession();
+    let {data:{session}}=await sb.auth.getSession();
+    if(!session?.access_token){
+      const refreshed=await sb.auth.refreshSession();
+      session=refreshed.data.session;
+    }
     if(!session?.access_token) throw new Error("SESSION EXPIRED — SIGN IN AGAIN");
-    const res=await fetch(URL+"/functions/v1/save-mission",{
-      method:"POST",
-      headers:{"Content-Type":"application/json","Authorization":"Bearer "+session.access_token,"apikey":KEY},
-      body:JSON.stringify({score,xp,kills})
+    const {data:payload,error:functionError}=await sb.functions.invoke("save-mission",{
+      body:{score,xp,kills},
+      headers:{"Authorization":"Bearer "+session.access_token}
     });
-    const payload=await res.json().catch(()=>({}));
-    if(!res.ok) throw new Error(payload.error||("SAVE FAILED // HTTP "+res.status));
+    if(functionError) throw new Error(functionError.message||"SAVE FAILED");
+    if(!payload?.ok) throw new Error(payload?.error||"SAVE FAILED");
     crix=Number(payload.crix??crix);
     info.textContent="MISSION SAVED // +"+Number(payload.earned_crix||0)+" CRIX";
     btn.textContent="SAVED ✓";

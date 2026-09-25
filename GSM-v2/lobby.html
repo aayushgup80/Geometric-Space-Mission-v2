@@ -1,51 +1,193 @@
-<!doctype html><html lang="en"><head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>GSM V2 // Lobby</title>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GSM V2 // Mission Lobby</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Orbitron:wght@600;700;800;900&display=swap');
-*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#080a0e;color:#eee;font-family:Rajdhani,Arial,sans-serif}button,input{font:inherit}
-body{background:radial-gradient(circle at 72% 44%,#25292f 0,#111419 38%,#080a0e 78%)}
-.bg,.bg:before,.grid,.stars{position:absolute;inset:0;pointer-events:none!important}.bg,.grid,.stars{z-index:0}.bg{overflow:hidden;background:linear-gradient(115deg,transparent 0 48%,#ff46540b 48.1% 48.4%,transparent 48.5%)}.bg:before{content:"";background:radial-gradient(circle at 76% 50%,#ff465412,transparent 28%),linear-gradient(90deg,transparent,#ffffff03,transparent)}.grid{background:linear-gradient(#fff1 1px,transparent 1px),linear-gradient(90deg,#fff1 1px,transparent 1px);background-size:80px 80px;opacity:.035;transform:perspective(500px) rotateX(58deg);transform-origin:center bottom}.star{position:absolute;width:1px;height:1px;background:#fff;opacity:.35}
-.shell{height:100%;position:relative;z-index:10;pointer-events:auto}.shell button,.shell input{pointer-events:auto}.top{height:68px;display:flex;align-items:center;padding:0 28px;background:#080a0ed9;border-bottom:1px solid #ffffff12;position:relative;z-index:10}.brand{font:900 15px Orbitron;letter-spacing:.16em;color:#f3f3f3}.brand span{color:#ff4658}.brand small{display:block;font:600 7px Rajdhani;letter-spacing:.35em;color:#727982;margin-top:4px}
-.nav{display:flex;height:100%;margin-left:35px;gap:2px}.nav button{height:100%;min-width:90px;padding:0 15px;border:0;border-bottom:2px solid transparent;background:transparent;color:#858b93;cursor:pointer;font:700 11px Rajdhani;letter-spacing:.12em}.nav button:hover,.nav button.active{color:#fff;background:#ffffff05;border-bottom-color:#ff4658}
-.wallets{margin-left:auto;display:flex;align-items:center;gap:18px}.wallet{font:700 11px Rajdhani;color:#7e858e}.wallet b{font:800 15px Orbitron;margin-left:5px}.crix{color:#ffd34d}.token{color:#b98cff}.profile{width:40px;height:40px;border:1px solid #ffffff20;background:#ffffff05;color:#fff;cursor:pointer}
-.content{height:calc(100% - 68px);display:grid;grid-template-columns:230px minmax(480px,1fr) 255px;gap:16px;padding:16px 28px}.side{display:flex;flex-direction:column;gap:12px}.panel{background:#101318dd;border:1px solid #ffffff0d;box-shadow:0 18px 45px #0008;padding:16px;position:relative}.panel:before{content:"";position:absolute;top:0;left:0;width:34px;height:2px;background:#ff4658}.eyebrow{font:700 8px Rajdhani;letter-spacing:.2em;color:#777e87}.pilot{font:900 23px Orbitron;margin:8px 0 15px;color:#f7f7f7;word-break:break-word}.line{height:1px;background:#fff0f;margin:12px 0}.row{display:flex;justify-content:space-between;margin:9px 0;font:600 10px Rajdhani;color:#777f89}.row b{font:800 10px Orbitron;color:#e6e7e8;text-align:right}.red{color:#ff5362!important}.green{color:#64e6a0!important}.gold{color:#ffd34d!important}
-.center{min-width:0;display:grid;grid-template-rows:auto 1fr;gap:12px}.hero{position:relative;overflow:hidden;border:1px solid #ffffff12;background:linear-gradient(145deg,#171a20e8,#0d1015e8);min-height:125px;padding:24px}.hero:after{content:"GSM";position:absolute;right:-20px;bottom:-55px;font:900 150px Orbitron;color:#ffffff03;transform:skew(-10deg)}.hero .k{font:700 9px Rajdhani;color:#ff5362;letter-spacing:.25em}.hero h1{font:900 35px Orbitron;margin:7px 0;color:#f4f4f4;letter-spacing:.05em}.hero p{margin:0;color:#858c95;font-size:12px;max-width:650px}
-.stage{position:relative;overflow:hidden;border:1px solid #ffffff12;background:radial-gradient(circle at 55% 48%,#3a3f46 0,#1b1f24 22%,#0d1015 65%);display:flex;align-items:center;justify-content:center;box-shadow:inset 0 0 100px #0008}.stage:before{content:"";position:absolute;pointer-events:none;width:420px;height:420px;border:1px solid #ffffff0c;border-radius:50%;box-shadow:0 0 0 70px #ffffff02,0 0 0 140px #ffffff01}.stage:after{content:"";position:absolute;inset:0;background:linear-gradient(transparent 49.8%,#ff465408 50%,transparent 50.2%),linear-gradient(90deg,transparent 49.8%,#ff465408 50%,transparent 50.2%);pointer-events:none}
-.deploy{position:relative;z-index:3;text-align:center}.deploy .small{font:700 9px Rajdhani;color:#a2a6ab;letter-spacing:.3em}.deploy h2{font:900 42px Orbitron;margin:12px 0 5px;color:#fff}.deploy p{margin:0 0 22px;color:#838a93;font:600 11px Rajdhani;letter-spacing:.1em}.launch{width:290px;height:62px;border:0;background:#ff4658;color:#fff;cursor:pointer;clip-path:polygon(0 0,94% 0,100% 50%,94% 100%,0 100%);font:900 14px Orbitron;letter-spacing:.15em;box-shadow:0 15px 45px #ff46582b;transition:.16s}.launch:hover{transform:translateY(-2px);filter:brightness(1.08)}
-.quick{position:absolute;left:22px;right:22px;bottom:18px;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;z-index:4}.quick button{border:1px solid #ffffff12;background:#0b0e13dd;color:#aab0b7;padding:12px;cursor:pointer;text-align:left}.quick button:hover{border-color:#ff465844;color:#fff}.quick b{display:block;font:800 10px Orbitron;color:#ddd;margin-bottom:4px}.quick span{font-size:9px}
-.tabs{display:flex;gap:7px;margin-bottom:12px}.tabs button{border:1px solid #ffffff12;background:#ffffff04;color:#888f98;padding:8px 11px;cursor:pointer;font:700 9px Rajdhani}.tabs button.active{background:#ff465812;border-color:#ff465855;color:#fff}.items{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.item{background:#0b0e13;border:1px solid #ffffff0e;padding:13px}.item h3{font:800 12px Orbitron;margin:0;color:#eee}.tier{font:700 8px Rajdhani;color:#ff6370;letter-spacing:.15em;margin:6px 0}.item p{font-size:10px;color:#858d96;line-height:1.5;min-height:35px}.price{font:800 10px Orbitron;color:#ffd34d;margin:8px 0}.action{width:100%;padding:9px;border:1px solid #ffffff18;background:#171b20;color:#d8dadd;cursor:pointer;font:800 9px Orbitron}.action:hover{border-color:#ff4658;color:#fff}.buy{border-color:#ffd34d55;color:#ffe18a}.equipped{border-color:#64e6a055;color:#7ff0b2}
-.modal{position:absolute;inset:0;z-index:100;display:none;place-items:center;background:#050608e8;backdrop-filter:blur(12px);padding:20px}.modalCard{width:min(900px,94vw);max-height:86vh;overflow:auto;background:#101318;border:1px solid #ffffff18;box-shadow:0 30px 100px #000;padding:22px}.modalHead{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}.modalHead h2{font:900 18px Orbitron;margin:0}.close{border:1px solid #ffffff18;background:#ffffff05;color:#aaa;padding:8px 12px;cursor:pointer}.codebox{width:100%;height:48px;background:#080a0e;border:1px solid #ffffff1b;color:#fff;padding:0 12px;outline:0}.result{min-height:25px;margin-top:10px;color:#858e98;font-size:10px}.notice{position:absolute;z-index:150;bottom:20px;left:50%;transform:translate(-50%,15px);opacity:0;pointer-events:none;background:#11151b;border:1px solid #ff465855;padding:10px 16px;color:#fff;font:800 9px Orbitron;transition:.18s}.notice.show{opacity:1;transform:translate(-50%,0)}
-@media(max-width:1050px){.content{grid-template-columns:200px 1fr}.side.right{display:none}.nav{margin-left:12px}.nav button{min-width:70px;padding:0 8px}}@media(max-width:720px){.top{height:60px;padding:0 12px}.brand{font-size:11px}.brand small{display:none}.nav{margin-left:8px}.nav button{min-width:auto;font-size:0;padding:0 9px}.nav button:after{content:"◆";font-size:10px}.wallet{font-size:0}.wallet b{font-size:10px}.content{height:calc(100% - 60px);display:block;padding:8px}.side{display:none}.hero{display:none}.stage{height:100%}.deploy h2{font-size:27px}.launch{width:250px}.quick{display:none}.items{grid-template-columns:1fr}}
-</style></head><body>
-<div class="bg"></div><div class="grid"></div><div class="stars" id="stars"></div>
-<main class="shell"><header class="top"><div class="brand"><span>GSM</span> // V2<small>GEOMETRIC SPACE MISSION</small></div><nav class="nav"><button class="active" data-view="overview">PLAY</button><button data-view="hangar">COLLECTION</button><button data-view="shop">STORE</button><button data-view="missions">MISSIONS</button><button data-view="armory">ARMORY</button></nav><div class="wallets"><div class="wallet">₢<b class="crix" id="crix">0</b></div><div class="wallet">◆<b class="token" id="tokens">0</b></div><button class="profile" id="profile">◉</button></div></header>
-<section class="content">
-<aside class="side"><div class="panel"><div class="eyebrow">PILOT</div><div class="pilot" id="pilot">LOADING</div><div class="row"><span>STATUS</span><b class="green">ONLINE</b></div><div class="row"><span>AUTH</span><b>SECURE</b></div></div><div class="panel"><div class="eyebrow">EQUIPPED</div><div class="row"><span>SHIP</span><b id="shipName">SCOUT</b></div><div class="row"><span>WEAPON</span><b id="weaponName">BLASTER</b></div><div class="row"><span>PILOT</span><b id="pilotLoad">NONE</b></div></div><div class="panel"><div class="eyebrow">MISSION CODES</div><p style="font-size:10px;color:#858d96">Redeem a code to add rewards to your account.</p><button class="action" id="codeOpen">CODE TERMINAL</button></div></aside>
-<section class="center"><div class="hero"><div class="k">MISSION CONTROL // SECTOR 01</div><h1>READY FOR COMBAT</h1><p>Configure your collection, spend your Crix, and deploy into the sector.</p></div><div class="stage"><div class="deploy"><div class="small">NO ACTIVE MATCH</div><h2>ENTER THE SECTOR</h2><p>ALL SYSTEMS NOMINAL · QUEUE READY</p><button class="launch" id="launch">PLAY</button></div><div class="quick"><button id="qCollection"><b>COLLECTION</b><span>Ships, weapons & pilots</span></button><button id="qStore"><b>STORE</b><span>Spend Crix & M-Tokens</span></button><button id="qMissions"><b>MISSIONS</b><span>Rules & progression</span></button></div></div></section>
-<aside class="side right"><div class="panel"><div class="eyebrow">ACCOUNT</div><div class="row"><span>CRIX</span><b class="crix" id="crix2">0</b></div><div class="row"><span>M-TOKENS</span><b class="token" id="tokens2">0</b></div></div><div class="panel"><div class="eyebrow">MISSION</div><div style="font:800 12px Orbitron;margin:9px 0">SECTOR SURVIVAL</div><div class="row"><span>REWARD</span><b>XP + CRIX</b></div><div class="row"><span>HULL 0%</span><b class="red">GAME OVER</b></div></div><div class="panel"><div class="eyebrow">SYSTEMS</div><div class="row"><span>AUTH</span><b class="green">ONLINE</b></div><div class="row"><span>DATABASE</span><b class="green">SYNCED</b></div><div class="row"><span>COMBAT</span><b>READY</b></div></div></aside></section>
-<div class="modal" id="modal"><section class="modalCard"><div class="modalHead"><h2 id="title">SYSTEM</h2><button class="close" id="close">CLOSE</button></div><div id="content"></div></section></div><div class="notice" id="notice"></div>
-<audio id="music" loop src="sounds/lobby-music.wav"></audio><audio id="hover" src="sounds/button-hover.mp3"></audio><audio id="click" src="sounds/button-click.mp3"></audio>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.83.0/dist/umd/supabase.min.js"></script><script>
-const URL="https://ccdllfswfhtgcolkugbz.supabase.co",KEY="sb_publishable_LPd-zxWUKM8c1p2P9sbbuA_EmhtqQr5",sb=window.supabase.createClient(URL,KEY),$=id=>document.getElementById(id);
-let session=null,profile=null,items=[],inventory=new Set(),loadout={};const modal=$("modal"),content=$("content");
-function snd(a){try{if(!a)return;a.currentTime=0;a.play().catch(()=>{})}catch(e){}}document.addEventListener("mouseover",e=>{if(e.target.closest("button"))snd($("hover"))});document.addEventListener("click",e=>{if(e.target.closest("button")){snd($("click"));$("music").play().catch(()=>{})}});
-for(let i=0;i<100;i++){const s=document.createElement("i");s.className="star";s.style.left=Math.random()*100+"%";s.style.top=Math.random()*100+"%";$("stars").appendChild(s)}
-function notice(t){const n=$("notice");n.textContent=t;n.classList.add("show");clearTimeout(notice.t);notice.t=setTimeout(()=>n.classList.remove("show"),1800)}
-function wallet(){const c=Number(profile?.crix||0).toLocaleString(),m=Number(profile?.m_tokens||0).toLocaleString();$("crix").textContent=c;$("crix2").textContent=c;$("tokens").textContent=m;$("tokens2").textContent=m}
-function item(id){return items.find(x=>x.id===id)}function renderLoadout(){const s=item(loadout.ship_id)||item("ship_default"),w=item(loadout.weapon_id)||item("weapon_default_blaster"),p=item(loadout.pilot_id);$("shipName").textContent=(s?.name||"SCOUT").toUpperCase();$("weaponName").textContent=(w?.name||"BLASTER").toUpperCase();$("pilotLoad").textContent=(p?.name||"NONE").toUpperCase()}
-async function action(action,itemId){try{const {data:{session:s}}=await sb.auth.getSession();if(!s?.access_token)throw Error("SESSION EXPIRED");const r=await fetch(URL+"/functions/v1/game-action",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+s.access_token,"apikey":KEY},body:JSON.stringify({action,item_id:itemId})});const j=await r.json();if(!r.ok||!j.ok)throw Error(j.error||"ACTION FAILED");if(action==="purchase"){profile.crix=j.crix;profile.m_tokens=j.m_tokens;inventory.add(itemId);wallet();notice("ACQUIRED // "+itemId.toUpperCase())}else{loadout=j.loadout;renderLoadout();notice("EQUIPPED // "+itemId.toUpperCase())}return true}catch(e){notice(e.message||"REQUEST FAILED");return false}}
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800&family=Orbitron:wght@600;700;800;900&display=swap');
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#0b0d10;color:#fff;font-family:Inter,Arial,sans-serif}
+button,input{font:inherit}button{cursor:pointer}
+body{background:radial-gradient(circle at 52% 38%,#292d32 0,#17191d 28%,#0b0d10 72%);position:relative}
+body:before{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(120deg,transparent 0 42%,#ff46540a 42.2% 42.6%,transparent 42.8%),radial-gradient(circle at 70% 45%,#ff46540d,transparent 34%)}
+.shell{position:relative;z-index:5;height:100%;pointer-events:auto}
+.top{height:76px;display:flex;align-items:center;padding:0 30px;border-bottom:1px solid #ffffff12;background:#0a0c0fef}
+.logo{font:900 17px Orbitron;letter-spacing:.14em}.logo span{color:#ff4655}.logo small{display:block;color:#737982;font:700 7px Inter;letter-spacing:.34em;margin-top:5px}
+.iconbar{display:flex;align-items:center;gap:7px;margin-left:42px;height:100%}
+.icon{position:relative;width:48px;height:48px;border:1px solid transparent;background:transparent;color:#7d838a;display:grid;place-items:center;font-size:18px;transition:.15s}
+.icon span{position:absolute;bottom:4px;font:800 7px Inter;letter-spacing:.1em}
+.icon:hover,.icon.active{color:#fff;background:#ffffff07;border-color:#ffffff14}.icon.active:after{content:"";position:absolute;left:8px;right:8px;bottom:-15px;height:2px;background:#ff4655}
+.account{margin-left:auto;display:flex;align-items:center;gap:13px}.wallet{font:800 10px Inter;color:#777f88}.wallet b{font:900 13px Orbitron;margin-left:4px}.crix{color:#ffd34f}.token{color:#b98cff}
+.avatar{width:42px;height:42px;border:1px solid #ffffff24;background:#15181c;color:#fff;font:900 15px Orbitron}.avatar:hover{border-color:#ff4655}
+.main{height:calc(100% - 76px);display:grid;grid-template-columns:250px 1fr 250px;gap:18px;padding:18px 30px}
+.card{border:1px solid #ffffff12;background:#111419e8;box-shadow:0 20px 60px #0009;position:relative}.card:before{content:"";position:absolute;left:0;top:0;width:38px;height:2px;background:#ff4655}
+.left,.right{display:flex;flex-direction:column;gap:14px}.panel{padding:18px}.label{font:800 8px Inter;color:#737a83;letter-spacing:.2em}.name{font:900 22px Orbitron;margin:10px 0 16px;word-break:break-word}.sub{color:#7f8790;font-size:10px;line-height:1.6}.stat{display:flex;justify-content:space-between;padding:9px 0;border-top:1px solid #ffffff0a;color:#737a83;font-size:9px}.stat b{color:#e9eaeb;font:800 9px Orbitron}.online{color:#65e9a0!important}.gold{color:#ffd34f!important}
+.center{position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;border:1px solid #ffffff10;background:radial-gradient(circle at 50% 45%,#45494d 0,#25292e 22%,#101317 64%,#0b0d10 100%);box-shadow:inset 0 0 130px #000b}.center:before{content:"";position:absolute;width:520px;height:520px;border:1px solid #ffffff10;border-radius:50%;box-shadow:0 0 0 85px #ffffff02,0 0 0 170px #ffffff01;pointer-events:none}.center:after{content:"";position:absolute;inset:0;background:linear-gradient(transparent 49.8%,#ff465407 50%,transparent 50.2%),linear-gradient(90deg,transparent 49.8%,#ff465407 50%,transparent 50.2%);pointer-events:none}
+.hero{text-align:center;position:relative;z-index:2}.kicker{font:800 9px Inter;color:#ff5361;letter-spacing:.28em}.hero h1{font:900 clamp(36px,5vw,62px) Orbitron;margin:13px 0 5px;letter-spacing:.05em}.hero p{color:#888f97;font-size:10px;letter-spacing:.1em;margin:0 0 28px}
+.play{width:300px;height:64px;border:0;background:#ff4655;color:#fff;clip-path:polygon(0 0,94% 0,100% 50%,94% 100%,0 100%);font:900 15px Orbitron;letter-spacing:.16em;box-shadow:0 20px 60px #ff465530;transition:.16s}.play:hover{filter:brightness(1.1);transform:translateY(-2px)}
+.hint{margin-top:18px;color:#676e77;font:700 8px Inter;letter-spacing:.2em}
+.corner{position:absolute;z-index:3;left:18px;bottom:18px;color:#666e77;font:800 8px Inter;letter-spacing:.16em}.corner.right{left:auto;right:18px}
+.modal{position:fixed;inset:0;z-index:50;display:none;place-items:center;background:#050608e9;backdrop-filter:blur(12px);padding:20px}.modal.open{display:grid}.modalbox{width:min(760px,92vw);max-height:82vh;overflow:auto;background:#111419;border:1px solid #ffffff18;box-shadow:0 30px 100px #000;padding:24px}.modalhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}.modalhead h2{font:900 18px Orbitron;margin:0}.close{border:1px solid #ffffff18;background:#181b20;color:#aaa;padding:8px 12px}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.item{background:#0b0e12;border:1px solid #ffffff10;padding:15px}.item h3{font:800 11px Orbitron;margin:0 0 8px}.item p{font-size:9px;color:#858c94;line-height:1.6}.action{width:100%;padding:10px;border:1px solid #ffffff18;background:#171b20;color:#ddd;font:800 9px Orbitron}.action:hover{border-color:#ff4655;color:#fff}.code{width:100%;height:48px;background:#080a0d;border:1px solid #ffffff18;color:#fff;padding:0 12px;outline:none}.code:focus{border-color:#ff4655}
+.toast{position:fixed;z-index:100;left:50%;bottom:24px;transform:translate(-50%,10px);opacity:0;pointer-events:none;padding:11px 18px;background:#11151b;border:1px solid #ff465555;color:#fff;font:800 9px Orbitron;transition:.18s}.toast.show{opacity:1;transform:translate(-50%,0)}
+@media(max-width:1050px){.main{grid-template-columns:210px 1fr}.right{display:none}}@media(max-width:700px){.top{padding:0 12px}.iconbar{margin-left:12px;gap:2px}.icon{width:38px;height:44px}.icon span{display:none}.account .wallet{display:none}.main{display:block;height:calc(100% - 76px);padding:8px}.left{display:none}.center{height:100%}.play{width:250px}.hero h1{font-size:32px}}
+</style>
+</head>
+<body>
+<main class="shell">
+<header class="top">
+  <div class="logo"><span>GSM</span> // V2<small>GEOMETRIC SPACE MISSION</small></div>
+  <nav class="iconbar">
+    <button class="icon active" data-view="play" title="Play">▶<span>PLAY</span></button>
+    <button class="icon" data-view="collection" title="Collection">▣<span>COLL</span></button>
+    <button class="icon" data-view="store" title="Store">◇<span>STORE</span></button>
+    <button class="icon" data-view="missions" title="Missions">◆<span>MISSIONS</span></button>
+    <button class="icon" data-view="armory" title="Armory">⚔<span>ARMORY</span></button>
+  </nav>
+  <div class="account">
+    <div class="wallet">₢ <b class="crix" id="crix">0</b></div>
+    <div class="wallet">◆ <b class="token" id="tokens">0</b></div>
+    <button class="avatar" id="profile" title="Pilot Profile">?</button>
+  </div>
+</header>
+<section class="main">
+  <aside class="left">
+    <div class="card panel">
+      <div class="label">PILOT PROFILE</div>
+      <div class="name" id="pilot">LOADING</div>
+      <div class="stat"><span>STATUS</span><b class="online">ONLINE</b></div>
+      <div class="stat"><span>AUTH</span><b>SECURE</b></div>
+      <div class="stat"><span>DATABASE</span><b class="online">SYNCED</b></div>
+    </div>
+    <div class="card panel">
+      <div class="label">EQUIPPED</div>
+      <div class="stat"><span>SHIP</span><b id="shipName">SCOUT</b></div>
+      <div class="stat"><span>WEAPON</span><b id="weaponName">BLASTER</b></div>
+      <div class="stat"><span>PILOT</span><b id="pilotLoad">NONE</b></div>
+    </div>
+  </aside>
+  <section class="center">
+    <div class="hero">
+      <div class="kicker">MISSION CONTROL // SECTOR 01</div>
+      <h1>READY FOR COMBAT</h1>
+      <p>YOUR LOADOUT IS READY · DEPLOY WHEN YOU ARE</p>
+      <button class="play" id="play">PLAY</button>
+      <div class="hint">SECTOR SURVIVAL · LIVE COMBAT SIMULATION</div>
+    </div>
+    <div class="corner">GSM // V2.0</div><div class="corner right">SYSTEMS NOMINAL</div>
+  </section>
+  <aside class="right">
+    <div class="card panel"><div class="label">ACCOUNT</div><div class="stat"><span>CRIX</span><b class="gold" id="crix2">0</b></div><div class="stat"><span>M-TOKENS</span><b id="tokens2">0</b></div></div>
+    <div class="card panel"><div class="label">MISSION PROTOCOL</div><div class="stat"><span>HULL</span><b>100%</b></div><div class="stat"><span>HULL 0%</span><b style="color:#ff5361">GAME OVER</b></div><div class="stat"><span>REWARD</span><b>CRIX + XP</b></div></div>
+    <div class="card panel"><div class="label">MISSION CODES</div><p class="sub">Redeem a mission code for account rewards.</p><button class="action" id="codeOpen">CODE TERMINAL</button></div>
+  </aside>
+</section>
+</main>
+
+<div class="modal" id="modal"><section class="modalbox"><div class="modalhead"><h2 id="modalTitle">SYSTEM</h2><button class="close" id="close">CLOSE</button></div><div id="modalContent"></div></section></div>
+<div class="toast" id="toast"></div>
+<audio id="music" loop preload="auto" src="sounds/lobby-music.wav"></audio>
+<audio id="hover" preload="auto" src="sounds/button-hover.mp3"></audio>
+<audio id="click" preload="auto" src="sounds/button-click.mp3"></audio>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.83.0/dist/umd/supabase.min.js"></script>
+<script>
+"use strict";
+const CONFIG={
+  supabaseUrl:"https://ccdllfswfhtgcolkugbz.supabase.co",
+  publishableKey:"sb_publishable_LPd-zxWUKM8c1p2P9sbbuA_EmhtqQr5"
+};
+const $=id=>document.getElementById(id);
+const modal=$("modal"), modalContent=$("modalContent");
+let sb=null,session=null,profile=null,items=[],inventory=new Set(),loadout={};
+
+function toast(t){const e=$("toast");e.textContent=t;e.classList.add("show");clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove("show"),1800)}
+function sound(id){const a=$(id);if(!a)return;try{a.currentTime=0;a.play().catch(()=>{})}catch(e){}}
+document.addEventListener("pointerover",e=>{if(e.target.closest("button"))sound("hover")});
+document.addEventListener("click",e=>{if(e.target.closest("button")){sound("click");const m=$("music");if(m)m.play().catch(()=>{})}});
+
+function wallet(){
+ const c=Number(profile?.crix||0).toLocaleString(),m=Number(profile?.m_tokens||0).toLocaleString();
+ $("crix").textContent=c;$("crix2").textContent=c;$("tokens").textContent=m;$("tokens2").textContent=m;
+}
+function item(id){return items.find(x=>x.id===id)}
+function renderLoadout(){
+ const s=item(loadout.ship_id)||item("ship_default"),w=item(loadout.weapon_id)||item("weapon_default_blaster"),p=item(loadout.pilot_id);
+ $("shipName").textContent=(s?.name||"SCOUT").toUpperCase();
+ $("weaponName").textContent=(w?.name||"BLASTER").toUpperCase();
+ $("pilotLoad").textContent=(p?.name||"NONE").toUpperCase();
+}
+async function apiAction(action,itemId){
+ const {data:{session:s}}=await sb.auth.getSession();
+ if(!s?.access_token)throw Error("SESSION EXPIRED");
+ const {data,error}=await sb.functions.invoke("game-action",{body:{action,item_id:itemId},headers:{Authorization:"Bearer "+s.access_token}});
+ if(error||!data?.ok)throw Error(data?.error||error?.message||"ACTION FAILED");
+ return data;
+}
 function price(x){const a=[];if(+x.price_crix)a.push("₢ "+(+x.price_crix).toLocaleString());if(+x.price_m_tokens)a.push("◆ "+x.price_m_tokens);return a.length?a.join(" + "):"FREE"}
-function stats(x){const s=x.stats||{};if(x.item_type==="ship")return "SPEED "+(s.speed||"—")+" · LIVES "+(s.lives||"—")+" · "+(s.ability||"—");if(x.item_type==="weapon")return "DAMAGE "+(s.damage||"—")+" · FIRE "+(s.fireDelay||"—")+"S"+(s.aoe?" · AOE":"");return "ABILITY "+(s.ability||"—")}
-function renderCatalog(arr){const cat=$("catalog");if(!cat)return;cat.innerHTML=arr.map(x=>{const owned=inventory.has(x.id)||x.id==="ship_default"||x.id==="weapon_default_blaster",equipped=[loadout.ship_id,loadout.weapon_id,loadout.pilot_id].includes(x.id);return '<article class="item"><h3>'+x.name+'</h3><div class="tier">TIER '+x.tier+' · '+x.item_type.toUpperCase()+'</div><p>'+stats(x)+'</p><div class="price">'+price(x)+'</div><button class="action '+(equipped?"equipped":owned?"":"buy")+'" data-action="'+(owned?"equip":"buy")+'" data-id="'+x.id+'">'+(equipped?"EQUIPPED":owned?"EQUIP":"BUY")+'</button></article>'}).join("");cat.querySelectorAll("[data-action]").forEach(b=>b.onclick=async()=>{if(b.textContent==="EQUIPPED")return;if(await action(b.dataset.action==="buy"?"purchase":"equip",b.dataset.id))renderCatalog(arr)})}
-function openView(view){document.querySelectorAll("[data-view]").forEach(b=>b.classList.toggle("active",b.dataset.view===view));$("title").textContent=view.toUpperCase();const list=items.filter(x=>x.is_shop_visible);
-if(view==="overview")content.innerHTML='<div class="items"><article class="item"><h3>DEPLOYMENT</h3><p>Launch the current combat configuration.</p><button class="action" id="ovLaunch">PLAY</button></article><article class="item"><h3>COLLECTION</h3><p>Equip your owned ships, weapons and pilots.</p><button class="action" id="ovCollection">OPEN</button></article><article class="item"><h3>CODE TERMINAL</h3><p>Redeem mission rewards.</p><button class="action" id="ovCode">OPEN</button></article></div>';
-else if(view==="missions")content.innerHTML='<div class="items"><article class="item"><h3>SECTOR SURVIVAL</h3><div class="tier">ACTIVE</div><p>Endless combat. Difficulty scales with pilot level.</p><button class="action" id="mPlay">PLAY</button></article><article class="item"><h3>HULL PROTOCOL</h3><div class="tier">RULE</div><p>Hull reaching 0% immediately ends the mission.</p></article><article class="item"><h3>SAVE PROTOCOL</h3><div class="tier">RULE</div><p>Pause the mission and use SAVE + EXIT.</p></article></div>';
-else{const type=view==="hangar"?"ship":view==="armory"?"weapon":null;const arr=type?list.filter(x=>x.item_type===type):list;content.innerHTML='<div class="tabs"><button class="active" data-cat="all">ALL</button><button data-cat="ship">SHIPS</button><button data-cat="weapon">WEAPONS</button><button data-cat="pilot">PILOTS</button></div><div class="items" id="catalog"></div>';renderCatalog(arr);content.querySelectorAll("[data-cat]").forEach(b=>b.onclick=()=>{content.querySelectorAll("[data-cat]").forEach(x=>x.classList.remove("active"));b.classList.add("active");renderCatalog(b.dataset.cat==="all"?list:list.filter(x=>x.item_type===b.dataset.cat))})}
-if(view==="overview"){$("ovLaunch")?.addEventListener("click",()=>location.href="game.html");$("ovCollection")?.addEventListener("click",()=>openView("hangar"));$("ovCode")?.addEventListener("click",codeTerminal)}if(view==="missions")$("mPlay")?.addEventListener("click",()=>location.href="game.html")}
-function codeTerminal(){modal.style.display="grid";$("title").textContent="CODE TERMINAL";content.innerHTML='<div class="item"><h3>REDEEM MISSION CODE</h3><p>One redemption per code, per pilot.</p><input class="codebox" id="code" placeholder="ENTER CODE"><button class="action" id="redeem" style="margin-top:10px">REDEEM</button><div class="result" id="result"></div></div>';$("code").focus();$("redeem").onclick=redeem}
-async function redeem(){const out=$("result"),code=$("code").value.trim();if(!code){out.textContent="ENTER A CODE";return}$("redeem").disabled=true;try{const {data:{session:s}}=await sb.auth.getSession();const r=await fetch(URL+"/functions/v1/redeem-code",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+s.access_token,"apikey":KEY},body:JSON.stringify({code})});const j=await r.json();if(!r.ok)throw Error(j.error||"CODE REJECTED");profile.crix=j.crix;profile.m_tokens=j.m_tokens;wallet();out.textContent="REDEEMED // "+j.reward}catch(e){out.textContent=e.message||"REDEMPTION FAILED"}finally{$("redeem").disabled=false}}
-function profileModal(){modal.style.display="grid";$("title").textContent="PILOT PROFILE";content.innerHTML='<div class="item"><h3>'+((profile?.username||"PILOT").toUpperCase())+'</h3><p>EMAIL: '+session.user.email+'<br>CRIX: '+Number(profile.crix).toLocaleString()+'<br>M-TOKENS: '+Number(profile.m_tokens).toLocaleString()+'</p><button class="action" id="logout">SIGN OUT</button></div>';$("logout").onclick=async()=>{await sb.auth.signOut();location.replace("login.html")}}
-async function boot(){try{const q=await sb.auth.getSession();session=q.data.session;if(!session){location.replace("login.html");return}let p=await sb.from("player_profiles").select("*").eq("id",session.user.id).maybeSingle();if(p.error)throw p.error;if(!p.data){const name=session.user.user_metadata?.username||session.user.email?.split("@")[0]||"PILOT";p=await sb.from("player_profiles").insert({id:session.user.id,username:name,crix:10,m_tokens:0}).select("*").single()}if(p.error)throw p.error;profile=p.data;const iq=await sb.from("game_items").select("*").eq("is_shop_visible",true);if(iq.error)throw iq.error;items=iq.data||[];const inv=await sb.from("player_inventory").select("item_id").eq("player_id",session.user.id);if(inv.error)throw inv.error;(inv.data||[]).forEach(x=>inventory.add(x.item_id));const lo=await sb.from("player_loadouts").select("*").eq("player_id",session.user.id).maybeSingle();if(lo.error)throw lo.error;if(!lo.data){const ins=await sb.from("player_loadouts").insert({player_id:session.user.id,ship_id:"ship_default",weapon_id:"weapon_default_blaster",pilot_id:null}).select("*").single();if(ins.error)throw ins.error;loadout=ins.data}else loadout=lo.data;renderLoadout();wallet();$("pilot").textContent=(profile.username||"PILOT").toUpperCase();$("music").volume=.22;$("music").play().catch(()=>{});openView("overview")}catch(e){console.error(e);$("pilot").textContent="SYNC ERROR";notice("LOBBY ERROR // "+(e.message||"CONSOLE"))}}
-$("launch").onclick=()=>location.href="game.html";$("qCollection").onclick=()=>openView("hangar");$("qStore").onclick=()=>openView("shop");$("qMissions").onclick=()=>openView("missions");$("profile").onclick=profileModal;$("codeOpen").onclick=codeTerminal;$("close").onclick=()=>modal.style.display="none";modal.onclick=e=>{if(e.target===modal)modal.style.display="none"};document.querySelectorAll("[data-view]").forEach(b=>b.onclick=()=>openView(b.dataset.view));boot();
-</script></main></body></html>
+function catalog(type){
+ const arr=items.filter(x=>!type||x.item_type===type);
+ modalContent.innerHTML='<div class="grid">'+arr.map(x=>{
+  const owned=inventory.has(x.id)||x.id==="ship_default"||x.id==="weapon_default_blaster";
+  const equipped=[loadout.ship_id,loadout.weapon_id,loadout.pilot_id].includes(x.id);
+  const s=x.stats||{};let desc=x.item_type==="ship"?("SPEED "+(s.speed||"—")+" · LIVES "+(s.lives||"—")):x.item_type==="weapon"?("DAMAGE "+(s.damage||"—")+" · FIRE "+(s.fireDelay||"—")+"s"):("ABILITY "+(s.ability||"—"));
+  return '<article class="item"><h3>'+x.name+'</h3><p>'+desc+'</p><p>'+price(x)+'</p><button class="action" data-id="'+x.id+'" data-action="'+(owned?"equip":"purchase")+'">'+(equipped?"EQUIPPED":owned?"EQUIP":"BUY")+'</button></article>';
+ }).join("")+'</div>';
+ modalContent.querySelectorAll("[data-action]").forEach(b=>b.onclick=async()=>{
+  if(b.textContent==="EQUIPPED")return;
+  try{const d=await apiAction(b.dataset.action,b.dataset.id);if(b.dataset.action==="purchase"){profile.crix=d.crix;profile.m_tokens=d.m_tokens;inventory.add(b.dataset.id);wallet()}else{loadout=d.loadout;renderLoadout()}catalog(type);toast("SYSTEM UPDATED")}catch(e){toast(e.message||"REQUEST FAILED")}
+ });
+}
+function openModal(title){$("modalTitle").textContent=title;modal.classList.add("open")}
+function openView(view){
+ document.querySelectorAll("[data-view]").forEach(b=>b.classList.toggle("active",b.dataset.view===view));
+ if(view==="play"){modal.classList.remove("open");return}
+ openModal(view.toUpperCase());
+ if(view==="collection"){catalog("ship")}
+ else if(view==="store"){catalog(null)}
+ else if(view==="armory"){catalog("weapon")}
+ else if(view==="missions"){modalContent.innerHTML='<div class="grid"><article class="item"><h3>SECTOR SURVIVAL</h3><p>Endless combat. Difficulty scales as your level rises.</p><button class="action" id="missionPlay">PLAY</button></article><article class="item"><h3>HULL PROTOCOL</h3><p>Hull reaching 0% immediately ends the mission.</p></article><article class="item"><h3>SAVE PROTOCOL</h3><p>Pause with ESC, then use SAVE + EXIT.</p></article></div>';$("missionPlay").onclick=()=>location.href="game.html"}
+}
+function codeTerminal(){
+ openModal("CODE TERMINAL");
+ modalContent.innerHTML='<article class="item"><h3>REDEEM MISSION CODE</h3><p>One redemption per code, per pilot.</p><input class="code" id="code" placeholder="ENTER CODE" maxlength="32"><button class="action" id="redeem" style="margin-top:10px">REDEEM</button><p id="result"></p></article>';
+ $("redeem").onclick=async()=>{
+  const code=$("code").value.trim();if(!code){$("result").textContent="ENTER A CODE";return}
+  try{const {data:{session:s}}=await sb.auth.getSession();if(!s?.access_token)throw Error("SESSION EXPIRED");const {data,error}=await sb.functions.invoke("redeem-code",{body:{code},headers:{Authorization:"Bearer "+s.access_token}});if(error||!data?.ok)throw Error(data?.error||error?.message||"CODE REJECTED");profile.crix=data.crix;profile.m_tokens=data.m_tokens;wallet();$("result").textContent="REDEEMED // "+data.reward}catch(e){$("result").textContent=e.message||"REDEMPTION FAILED"}
+ };
+}
+function profileModal(){
+ openModal("PILOT PROFILE");
+ const email=session?.user?.email||"—";
+ const initial=(profile?.username||"P").slice(0,1).toUpperCase();
+ modalContent.innerHTML='<div class="grid"><article class="item"><h3>'+((profile?.username||"PILOT").toUpperCase())+'</h3><p>EMAIL: '+email+'</p><p>₢ '+Number(profile?.crix||0).toLocaleString()+' Crix</p><p>◆ '+Number(profile?.m_tokens||0)+' M-Tokens</p></article><article class="item"><h3>LOADOUT</h3><p>SHIP: '+$("shipName").textContent+'</p><p>WEAPON: '+$("weaponName").textContent+'</p><p>PILOT: '+$("pilotLoad").textContent+'</p></article><article class="item"><h3>ACCOUNT</h3><p>AUTHENTICATED PILOT</p><button class="action" id="logout">SIGN OUT</button></article></div>';
+ $("logout").onclick=async()=>{await sb.auth.signOut();location.replace("login.html")}
+}
+async function boot(){
+ try{
+  if(!window.supabase?.createClient)throw Error("SUPABASE SDK FAILED TO LOAD");
+  const parsed=new globalThis.URL(CONFIG.supabaseUrl);
+  if(parsed.protocol!=="https:"||!parsed.hostname.endsWith(".supabase.co"))throw Error("SUPABASE URL INVALID");
+  sb=window.supabase.createClient(CONFIG.supabaseUrl.trim(),CONFIG.publishableKey.trim());
+  const q=await sb.auth.getSession();session=q.data.session;
+  if(!session){location.replace("login.html");return}
+  let p=await sb.from("player_profiles").select("*").eq("id",session.user.id).maybeSingle();
+  if(p.error)throw p.error;
+  if(!p.data){const name=session.user.user_metadata?.username||session.user.email?.split("@")[0]||"PILOT";p=await sb.from("player_profiles").insert({id:session.user.id,username:name,crix:10,m_tokens:0}).select("*").single()}
+  if(p.error)throw p.error;profile=p.data;
+  const iq=await sb.from("game_items").select("*").eq("is_shop_visible",true);if(iq.error)throw iq.error;items=iq.data||[];
+  const inv=await sb.from("player_inventory").select("item_id").eq("player_id",session.user.id);if(inv.error)throw inv.error;(inv.data||[]).forEach(x=>inventory.add(x.item_id));
+  const lo=await sb.from("player_loadouts").select("*").eq("player_id",session.user.id).maybeSingle();if(lo.error)throw lo.error;
+  if(lo.data)loadout=lo.data;else{const ins=await sb.from("player_loadouts").insert({player_id:session.user.id,ship_id:"ship_default",weapon_id:"weapon_default_blaster"}).select("*").single();if(ins.error)throw ins.error;loadout=ins.data}
+  $("pilot").textContent=(profile.username||"PILOT").toUpperCase();$("profile").textContent=(profile.username||"P").slice(0,1).toUpperCase();wallet();renderLoadout();
+  $("music").volume=.22;openView("play");
+ }catch(e){console.error("LOBBY BOOT:",e);$("pilot").textContent="SYNC ERROR";toast("LOBBY ERROR // "+(e.message||"CHECK CONSOLE"))}
+}
+$("play").onclick=()=>location.href="game.html";
+$("profile").onclick=profileModal;
+$("codeOpen").onclick=codeTerminal;
+$("close").onclick=()=>modal.classList.remove("open");
+modal.onclick=e=>{if(e.target===modal)modal.classList.remove("open")};
+document.querySelectorAll("[data-view]").forEach(b=>b.onclick=()=>openView(b.dataset.view));
+boot();
+</script>
+</body>
+</html>

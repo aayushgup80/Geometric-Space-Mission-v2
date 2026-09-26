@@ -35,8 +35,29 @@ function ability(){if(state!=="RUNNING"||abilityClock>0)return;abilityClock=8;ab
 }
 function showNovaTargetPrompt(){
   let el=$("nova-target-prompt");
-  if(!el){el=document.createElement("div");el.id="nova-target-prompt";el.style="position:absolute;z-index:190;inset:0;display:grid;place-items:center;background:rgba(0,0,0,.34);backdrop-filter:blur(3px);pointer-events:auto";el.innerHTML='<div style="width:min(430px,86%);padding:22px 26px;text-align:center;border:1px solid #b56cff88;background:#080511f2;box-shadow:0 0 50px #7f3cff33;color:#f0e6ff;font:800 12px Orbitron;letter-spacing:.12em;cursor:pointer"><div style="color:#b56cff;font-size:8px;letter-spacing:.3em;margin-bottom:8px">NOVA ABILITY // TARGETING</div>CLICK ON AN AREA TO DEPLOY BLACK HOLE<div style="margin-top:10px;color:#7f6f92;font-size:7px;letter-spacing:.16em">MAX TARGETS: 4</div></div>';
-    el.addEventListener("pointerdown",e=>{e.preventDefault();const rect=$("game-canvas").getBoundingClientRect();const x=(e.clientX-rect.left)*(W/rect.width);const y=(e.clientY-rect.top)*(H/rect.height);novaTargeting=false;el.remove();activateNovaHole(x,y);});shell.appendChild(el)
+  if(!el){
+    el=document.createElement("div");
+    el.id="nova-target-prompt";
+    el.style="position:absolute;z-index:190;top:86px;left:50%;transform:translateX(-50%);padding:10px 18px;text-align:center;border:1px solid #b56cff88;border-radius:4px;background:#080511e8;box-shadow:0 0 28px #7f3cff33;color:#f0e6ff;font:800 10px Orbitron;letter-spacing:.12em;pointer-events:none;white-space:nowrap";
+    el.innerHTML='<div style="color:#b56cff;font-size:7px;letter-spacing:.3em;margin-bottom:5px">NOVA // TARGETING</div>CLICK AN AREA TO DEPLOY BLACK HOLE <span style="color:#7f6f92;font-size:7px">· MAX 4</span>';
+    $("game-container").style.cursor="crosshair";
+    $("game-canvas").style.cursor="crosshair";
+    $("game-container").addEventListener("pointerdown",window._novaTargetClick={handle:e=>{
+      if(!novaTargeting)return;
+      e.preventDefault();
+      const rect=$("game-canvas").getBoundingClientRect();
+      const x=(e.clientX-rect.left)*(W/rect.width);
+      const y=(e.clientY-rect.top)*(H/rect.height);
+      if(y<70)return;
+      novaTargeting=false;
+      el.remove();
+      $("game-container").style.cursor="";
+      $("game-canvas").style.cursor="";
+      $("game-container").removeEventListener("pointerdown",window._novaTargetClick);
+      window._novaTargetClick=null;
+      activateNovaHole(x,y);
+    }});
+    $("game-container").appendChild(el);
   }
 }
 function activateNovaHole(x,y){
@@ -74,7 +95,7 @@ if(abilityFx.type==="ship_zed_black"&&abilityFx.t>0){ctx.save();ctx.fillStyle="r
 function loop(t){if(state!=="RUNNING")return;const dt=Math.min(.033,(t-last)/1000);last=t;update(dt);draw();fpsFrames++;if(t-fpsStamp>=500){fpsValue=Math.round(fpsFrames*1000/(t-fpsStamp));fpsFrames=0;fpsStamp=t;const sf=$("side-fps");if(sf)sf.textContent=fpsValue}scheduleLoop()}
 function hold(id,set){const b=$(id),on=e=>{e.preventDefault();set(true);musicOn()},off=e=>{e.preventDefault();set(false)};b.addEventListener("pointerdown",on);b.addEventListener("pointerup",off);b.addEventListener("pointercancel",off);b.addEventListener("pointerleave",off)}
 hold("move-left-btn",v=>left=v);hold("move-right-btn",v=>right=v);hold("fire-btn",v=>fire=v);$("ability-btn").addEventListener("pointerdown",e=>{e.preventDefault();ability()});const pauseButton=$("pause-button");if(pauseButton)pauseButton.addEventListener("pointerdown",e=>{e.preventDefault();togglePause()});function togglePause(){if(state==="RUNNING"){state="PAUSED";pauseOverlay.style.display="grid";music.pause();left=false;right=false;fire=false}else if(state==="PAUSED"&&$("network-overlay")?.style.display!=="grid"){state="RUNNING";pauseOverlay.style.display="none";last=performance.now();scheduleLoop();musicOn()}}$("start-button").addEventListener("click",launch);$("resume-button").addEventListener("click",()=>{state="RUNNING";pauseOverlay.style.display="none";last=performance.now();fpsStamp=last;fpsFrames=0;scheduleLoop();musicOn()});$("exit-button").addEventListener("click",()=>saveMissionAndExit());$("settings-button").addEventListener("click",openSettings);$("save-exit-button").addEventListener("pointerdown",e=>{e.preventDefault();e.stopPropagation();saveMissionAndExit();},{capture:true});$("save-exit-button").addEventListener("click",e=>{e.preventDefault();e.stopPropagation();});
-addEventListener("keydown",e=>{if(e.code==="Escape"){if(novaTargeting){novaTargeting=false;const np=$("nova-target-prompt");if(np)np.remove();abilityClock=0;toast("NOVA TARGETING // CANCELLED");return}if(state==="RUNNING"){state="PAUSED";pauseOverlay.style.display="grid";music.pause();left=false;right=false;fire=false}else if(state==="PAUSED"){state="RUNNING";pauseOverlay.style.display="none";last=performance.now();requestAnimationFrame(loop);musicOn()}else if(state==="OVER"){location.href="lobby.html"}return}if(e.code==="ArrowLeft"||e.code==="KeyA")left=true;if(e.code==="ArrowRight"||e.code==="KeyD")right=true;if(e.code==="Space")fire=true;if(e.code==="KeyE")ability();if(e.code==="Enter"&&state!=="RUNNING")launch();if(["ArrowLeft","ArrowRight","Space"].includes(e.code))e.preventDefault()});addEventListener("keyup",e=>{if(e.code==="ArrowLeft"||e.code==="KeyA")left=false;if(e.code==="ArrowRight"||e.code==="KeyD")right=false;if(e.code==="Space")fire=false});
+addEventListener("keydown",e=>{if(e.code==="Escape"){if(novaTargeting){novaTargeting=false;const np=$("nova-target-prompt");if(np)np.remove();$("game-container").style.cursor="";$("game-canvas").style.cursor="";if(window._novaTargetClick){$("game-container").removeEventListener("pointerdown",window._novaTargetClick);window._novaTargetClick=null}abilityClock=0;toast("NOVA TARGETING // CANCELLED");return}if(state==="RUNNING"){state="PAUSED";pauseOverlay.style.display="grid";music.pause();left=false;right=false;fire=false}else if(state==="PAUSED"){state="RUNNING";pauseOverlay.style.display="none";last=performance.now();requestAnimationFrame(loop);musicOn()}else if(state==="OVER"){location.href="lobby.html"}return}if(e.code==="ArrowLeft"||e.code==="KeyA")left=true;if(e.code==="ArrowRight"||e.code==="KeyD")right=true;if(e.code==="Space")fire=true;if(e.code==="KeyE")ability();if(e.code==="Enter"&&state!=="RUNNING")launch();if(["ArrowLeft","ArrowRight","Space"].includes(e.code))e.preventDefault()});addEventListener("keyup",e=>{if(e.code==="ArrowLeft"||e.code==="KeyA")left=false;if(e.code==="ArrowRight"||e.code==="KeyD")right=false;if(e.code==="Space")fire=false});
 
 // Network safety: pause the mission whenever connectivity is lost.\nfunction setNetworkState(online){const overlay=$("network-overlay");if(!overlay)return;if(online){overlay.style.display="none";if(state==="NETWORK_PAUSED"){state="PAUSED";pauseOverlay.style.display="grid";}}else{if(state==="RUNNING"){state="NETWORK_PAUSED";music.pause();left=false;right=false;fire=false;pauseOverlay.style.display="none";}overlay.style.display="grid";}}\naddEventListener("offline",()=>setNetworkState(false));addEventListener("online",()=>setNetworkState(true));\n// GSM V2 settings + mission persistence
 const settings={master:+localStorage.gsmMaster||1,music:+localStorage.gsmMusic||.28,bullet:+localStorage.gsmBullet||.7,damage:+localStorage.gsmDamage||1,ui:+localStorage.gsmUI||1,fps:localStorage.gsmFPS==="1",vsync:localStorage.gsmVsync!=="0"};

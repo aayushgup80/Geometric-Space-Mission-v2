@@ -12,4 +12,13 @@ async function auth(){const q=await sb.auth.getSession();session=q.data.session;
 function esc(x){return String(x??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[c]))}
 
 (async()=>{try{const d=await auth();const lv=Number(d.profile.level||1),xp=Number(d.profile.xp||0),next=(lv<=1?300:lv===2?750:Math.floor(750*Math.pow(1.5,lv-2)));document.getElementById("progress").innerHTML='<article class="card"><span class="tag">CURRENT LEVEL</span><div class="cardcount">LEVEL : <|'+lv+'|></div><p class="muted">Permanent account level.</p></article><article class="card"><span class="tag">TOTAL XP</span><div class="cardcount">'+xp.toLocaleString()+'</div><p class="muted">XP is awarded when a mission is saved.</p></article><article class="card"><span class="tag">NEXT THRESHOLD</span><div class="cardcount">'+next.toLocaleString()+'</div><p class="muted">Threshold for reaching the next level.</p></article><article class="card"><span class="tag">MISSION FORMULA</span><div class="cardcount">SCORE ÷ 3</div><p class="muted">Current difficulty factor = 1.</p></article>'}catch(e){document.getElementById("progress").innerHTML='<div class="notice">'+esc(e.message)+'</div>'}})();
-</script></body></html>
+</script><audio id="bgMusic" loop preload="auto" src="sounds/lobby-music.wav"></audio>
+<script>
+(()=>{const m=document.getElementById("bgMusic");if(!m)return;const start=()=>{m.volume=0.32;m.play().catch(()=>{})};document.addEventListener("pointerdown",start,{once:true});document.addEventListener("keydown",start,{once:true});})();
+</script>
+<audio id="uiHover" preload="auto" src="sounds/button-hover.mp3"></audio>
+<audio id="uiClick" preload="auto" src="sounds/button-click.mp3"></audio>
+<script>
+(()=>{const h=document.getElementById("uiHover"),c=document.getElementById("uiClick");const play=a=>{if(!a)return;try{a.currentTime=0;a.play().catch(()=>{})}catch(e){}};document.addEventListener("pointerover",e=>{if(e.target.closest("button,a,[role=\"button\"]"))play(h)});document.addEventListener("click",e=>{if(e.target.closest("button,a,[role=\"button\"]"))play(c)});})();
+</script>
+</body></html>

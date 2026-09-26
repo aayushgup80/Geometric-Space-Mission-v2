@@ -16,4 +16,13 @@ const keys={ship_echo:"echo_cards",ship_nova:"nova_cards",ship_orchid:"orchid_ca
 (async()=>{try{await auth();const d=await api("ship_data");render(d)}catch(e){document.getElementById("ships").innerHTML='<div class="notice">'+esc(e.message)+'</div>'}})();
 function render(d){const unlocked=new Set(d.unlocked_ships||[]);document.getElementById("ships").innerHTML=d.ships.map(s=>{const st=s.stats||{},n=Number(d.cards?.[keys[s.id]]||0),need=Number(st.card_required||0),min=Number(st.card_min||0),max=Number(st.card_max||0),price=Math.floor((min+max)/2)*need,u=unlocked.has(s.id);return '<article class="card ship"><span class="tag">'+esc(st.rarity)+' · '+(st.rare_chance?'0.1% SHOP CHANCE':'STANDARD SHOP')+'</span><div class="ship-art" style="color:'+(colors[s.id]||"#00eaff")+'">'+esc(s.name.toUpperCase())+'</div><h2>'+esc(s.name)+'</h2><div class="desc">'+esc(st.ability_desc||"Ship ability")+'</div><div class="row"><span>CARDS COLLECTED</span><b>'+n+'/'+need+'</b></div><div class="progress"><i style="width:'+Math.min(100,n/need*100)+'%"></i></div><div class="row"><span>UNLOCK PRICE</span><b>₢ '+price.toLocaleString()+'</b></div><button class="btn '+(u?"good":"primary")+'" '+(u?"":n<need?"disabled":"")+' onclick="actionShip(\''+s.id+'\',\''+(u?"equip":"unlock")+'\')">'+(u?(d.loadout?.ship_id===s.id?"EQUIPPED":"EQUIP"):"UNLOCK SHIP")+"</button></article>"}).join("")}
 async function actionShip(id,action){try{await api(action==="equip"?"game_action":"unlock_ship",action==="equip"?{action:"equip",item_id:id}:{ship_id:id});location.reload()}catch(e){alert(e.message)}}
-</script></body></html>
+</script><audio id="bgMusic" loop preload="auto" src="sounds/lobby-music.wav"></audio>
+<script>
+(()=>{const m=document.getElementById("bgMusic");if(!m)return;const start=()=>{m.volume=0.32;m.play().catch(()=>{})};document.addEventListener("pointerdown",start,{once:true});document.addEventListener("keydown",start,{once:true});})();
+</script>
+<audio id="uiHover" preload="auto" src="sounds/button-hover.mp3"></audio>
+<audio id="uiClick" preload="auto" src="sounds/button-click.mp3"></audio>
+<script>
+(()=>{const h=document.getElementById("uiHover"),c=document.getElementById("uiClick");const play=a=>{if(!a)return;try{a.currentTime=0;a.play().catch(()=>{})}catch(e){}};document.addEventListener("pointerover",e=>{if(e.target.closest("button,a,[role=\"button\"]"))play(h)});document.addEventListener("click",e=>{if(e.target.closest("button,a,[role=\"button\"]"))play(c)});})();
+</script>
+</body></html>

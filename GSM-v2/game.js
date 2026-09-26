@@ -41,7 +41,7 @@ function showNovaTargetPrompt(){
 }
 function activateNovaHole(x,y){
   const targets=enemies.filter(e=>Math.hypot(e.x-x,e.y-y)<240).sort((a,b)=>Math.hypot(a.x-x,a.y-y)-Math.hypot(b.x-x,b.y-y)).slice(0,4);
-  novaHole={x,y,t:1.25,targets,done:false};abilityFx.type="ship_nova";abilityFx.t=1.25;toast("NOVA BLACK HOLE // DEPLOYED");
+  novaHole={x,y,t:1.25,targets,done:false};abilityFx.type="";abilityFx.t=0;toast("NOVA BLACK HOLE // DEPLOYED");
 }
 function resolveNovaHole(){
   if(!novaHole||novaHole.done)return;

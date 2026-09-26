@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://geometric-space-mission-v2-tg.netlify.app/sitemap.xml

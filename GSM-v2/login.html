@@ -73,8 +73,9 @@ async function boot(){
     $("loginEmail").value=session.user.email||"";
     $("switchAccount").style.display="block";
   }else{
-    const next=encodeURIComponent(location.href);
-    location.replace("https://toucan-store.netlify.app/account.html?next="+next);
+    msg($("loginMsg"),"NO TOUCAN SESSION // SIGN IN HERE OR OPEN TOUCAN ACCOUNT.",false);
+    $("switchAccount").style.display="block";
+    $("switchAccount").textContent="OPEN TOUCAN ACCOUNT";
   }
 }
 boot();

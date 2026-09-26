@@ -4,4 +4,13 @@
 </style></head><body><header class="top"><a class="logo" href="lobby.html"><b>GSM</b> // V2</a><nav class="nav"><a href="lobby.html">PLAY</a><a href="inventory.html">INVENTORY</a><a href="store.html">STORE</a><a href="marketplace.html">MARKETPLACE</a><a href="missions.html">MISSIONS</a><a href="armory.html">ARMORY</a></nav><div class="acct" id="acct">LOADING</div></header><main class="wrap">
 <section class="head"><div><div class="eyebrow">OVERHAUL 1 // ARMORY</div><h1 class="title">ARMORY</h1><div class="muted">Weapons are intentionally held for a later patch.</div></div></section>
 <div class="card"><div class="ship-art" style="color:#ffd34f">WEAPONS</div><h2 style="font:900 16px Orbitron">WEAPON CARDS // COMING NEXT</h2><p class="muted" style="line-height:1.8">Overhaul 1 is shipping the ship-card economy first. Weapon cards, their 3 daily weapon slots, and weapon unlock progression can be layered in without changing your account progression system.</p></div>
-</main><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.83.0/dist/umd/supabase.min.js"></script><script>undefined</script></body></html>
+</main><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.83.0/dist/umd/supabase.min.js"></script><script>undefined</script><audio id="bgMusic" loop preload="auto" src="sounds/lobby-music.wav"></audio>
+<script>
+(()=>{const m=document.getElementById("bgMusic");if(!m)return;const start=()=>{m.volume=0.32;m.play().catch(()=>{})};document.addEventListener("pointerdown",start,{once:true});document.addEventListener("keydown",start,{once:true});})();
+</script>
+<audio id="uiHover" preload="auto" src="sounds/button-hover.mp3"></audio>
+<audio id="uiClick" preload="auto" src="sounds/button-click.mp3"></audio>
+<script>
+(()=>{const h=document.getElementById("uiHover"),c=document.getElementById("uiClick");const play=a=>{if(!a)return;try{a.currentTime=0;a.play().catch(()=>{})}catch(e){}};document.addEventListener("pointerover",e=>{if(e.target.closest("button,a,[role=\"button\"]"))play(h)});document.addEventListener("click",e=>{if(e.target.closest("button,a,[role=\"button\"]"))play(c)});})();
+</script>
+</body></html>

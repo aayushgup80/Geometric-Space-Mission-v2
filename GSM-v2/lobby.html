@@ -136,30 +136,23 @@ function profileModal(){
     </div>`;
   $("logout").onclick=async()=>{await sb.auth.signOut();location.replace("login.html")};
 }
-async function checkToucanOwnership(){
-  const r=await fetch(TOUCAN_URL+"/functions/v1/store-api",{
-    method:"POST",
-    headers:{apikey:TOUCAN_KEY,Authorization:"Bearer "+session.access_token,"Content-Type":"application/json"},
-    body:JSON.stringify({action:"entitlement",game_slug:"gsm-v2"})
-  });
-  const d=await r.json().catch(()=>({}));
-  if(!r.ok||d?.error)throw Error(d?.error||"TOUCAN OWNERSHIP CHECK FAILED");
-  return !!d.owned;
+const BOOT_CACHE="gsm_lobby_boot_v1";
+function applyBoot(d){
+  profile=d.profile||{};items=d.items||[];inventory=new Set(d.inventory||[]);loadout=d.loadout||{};
+  $("pilot").textContent=(profile.username||"PILOT").toUpperCase();
+  $("profile").textContent=(profile.username||"P").slice(0,1).toUpperCase();
+  wallet();renderLoadout();$("level-display").textContent=Number(profile.level||1);$("xp-display").textContent=Number(profile.xp||0)+"/"+nextLevelXp(Number(profile.level||1));$("next-level-display").textContent=nextLevelXp(Number(profile.level||1)).toLocaleString()+" XP";$("music").volume=.22;openView("play");
 }
 async function boot(){
   try{
     const q=await sb.auth.getSession();
     session=q.data.session;
     if(!session){location.replace("login.html");return}
-    if(!(await checkToucanOwnership())){
-      location.replace("login.html?reason=ownership_required");
-      return;
-    }
+    const cached=sessionStorage.getItem(BOOT_CACHE);
+    if(cached){try{applyBoot(JSON.parse(cached))}catch(e){}}
     const d=await gsmApi("bootstrap");
-    profile=d.profile;items=d.items||[];inventory=new Set(d.inventory||[]);loadout=d.loadout||{};
-    $("pilot").textContent=(profile.username||"PILOT").toUpperCase();
-    $("profile").textContent=(profile.username||"P").slice(0,1).toUpperCase();
-    wallet();renderLoadout();$("level-display").textContent=Number(profile.level||1);$("xp-display").textContent=Number(profile.xp||0)+"/"+nextLevelXp(Number(profile.level||1));$("next-level-display").textContent=nextLevelXp(Number(profile.level||1)).toLocaleString()+" XP";$("music").volume=.22;openView("play");
+    applyBoot(d);
+    sessionStorage.setItem(BOOT_CACHE,JSON.stringify(d));
   }catch(e){
     console.error("LOBBY BOOT:",e);
     $("pilot").textContent="SYNC ERROR";

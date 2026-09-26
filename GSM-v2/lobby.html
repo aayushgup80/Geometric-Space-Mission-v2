@@ -16,7 +16,7 @@ body:before{content:"";position:absolute;inset:0;pointer-events:none;background:
 .iconbar{display:flex;align-items:center;gap:7px;margin-left:42px;height:100%}
 .icon{position:relative;width:48px;height:48px;border:1px solid transparent;background:transparent;color:#7d838a;display:grid;place-items:center;font-size:18px;transition:.15s}
 .icon span{position:absolute;bottom:4px;font:800 7px Inter;letter-spacing:.1em}
-.icon:hover,.icon.active{color:#fff;background:#ffffff07;border-color:#ffffff14}.icon.friends{color:#ff4655}.icon.friends.active{background:#ff465510;border-color:#ff465544}.icon.friends:before{content:"";position:absolute;top:3px;right:4px;width:5px;height:5px;border-radius:50%;background:#ff4655;box-shadow:0 0 10px #ff4655}.icon.active:after{content:"";position:absolute;left:8px;right:8px;bottom:-15px;height:2px;background:#ff4655}
+.icon:hover,.icon.active{color:#fff;background:#ffffff07;border-color:#ffffff14}.icon.active:after{content:"";position:absolute;left:8px;right:8px;bottom:-15px;height:2px;background:#ff4655}
 .account{margin-left:auto;display:flex;align-items:center;gap:13px}.wallet{font:800 10px Inter;color:#777f88}.wallet b{font:900 13px Orbitron;margin-left:4px}.crix{color:#ffd34f}.token{color:#b98cff}
 .avatar{width:42px;height:42px;border:1px solid #ffffff24;background:#15181c;color:#fff;font:900 15px Orbitron}.avatar:hover{border-color:#ff4655}
 .main{height:calc(100% - 76px);display:grid;grid-template-columns:250px 1fr 250px;gap:18px;padding:18px 30px}
@@ -28,7 +28,7 @@ body:before{content:"";position:absolute;inset:0;pointer-events:none;background:
 .hint{margin-top:18px;color:#676e77;font:700 8px Inter;letter-spacing:.2em}
 .action{width:100%;padding:10px;border:1px solid #ffffff18;background:#171b20;color:#ddd;font:800 9px Orbitron}.action:hover{border-color:#ff4655;color:#fff}.code{width:100%;height:48px;background:#080a0d;border:1px solid #ffffff18;color:#fff;padding:0 12px;outline:none}.code:focus{border-color:#ff4655}.corner{position:absolute;z-index:3;left:18px;bottom:18px;color:#666e77;font:800 8px Inter;letter-spacing:.16em}.corner.right{left:auto;right:18px}
 .modal{position:fixed;inset:0;z-index:50;display:none;place-items:center;background:#050608e9;backdrop-filter:blur(12px);padding:20px}.modal.open{display:grid}.modalbox{width:min(760px,92vw);max-height:82vh;overflow:auto;background:#111419;border:1px solid #ffffff18;box-shadow:0 30px 100px #000;padding:24px}.modalhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}.modalhead h2{font:900 18px Orbitron;margin:0}.close{border:1px solid #ffffff18;background:#181b20;color:#aaa;padding:8px 12px}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.item{background:#0b0e12;border:1px solid #ffffff10;padding:15px}.item h3{font:800 11px Orbitron;margin:0 0 8px}.item p{font-size:9px;color:#858c94;line-height:1.6}.action{width:100%;padding:10px;border:1px solid #ffffff18;background:#171b20;color:#ddd;font:800 9px Orbitron}.action:hover{border-color:#ff4655;color:#fff}.code{width:100%;height:48px;background:#080a0d;border:1px solid #ffffff18;color:#fff;padding:0 12px;outline:none}.code:focus{border-color:#ff4655}
-.friends-shell{display:grid;grid-template-columns:240px 1fr;gap:12px;min-height:430px}.friend-list,.friend-chat{background:#0b0e12;border:1px solid #ffffff0d}.friend-list{padding:12px;overflow:auto}.friend-chat{display:flex;flex-direction:column;min-height:430px}.friend-search{display:flex;gap:7px;margin-bottom:10px}.friend-search .code{height:40px}.friend-row{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:11px 8px;border-bottom:1px solid #ffffff08}.friend-row b{font-size:9px}.friend-row small{display:block;color:#69717a;font-size:7px;margin-top:4px}.friend-row .action{width:auto;padding:8px 9px}.request{background:#171b20;border:1px solid #ffffff10;padding:10px;margin-bottom:8px}.request b{font-size:9px}.request-actions{display:flex;gap:6px;margin-top:8px}.request-actions .action{width:auto}.chat-head{padding:14px;border-bottom:1px solid #ffffff0d}.chat-head b{font:900 12px Orbitron}.chat-messages{flex:1;overflow:auto;padding:14px;display:flex;flex-direction:column;gap:8px}.bubble{max-width:78%;padding:9px 11px;border:1px solid #ffffff10;background:#171b20;font-size:9px;line-height:1.5}.bubble.mine{align-self:flex-end;background:#3a1118;border-color:#ff465533}.bubble small{display:block;color:#69717a;font-size:6px;margin-top:4px}.chat-send{display:flex;gap:8px;padding:10px;border-top:1px solid #ffffff0d}.chat-send input{flex:1}.empty{color:#69717a;font-size:8px;padding:18px;text-align:center}@media(max-width:700px){.friends-shell{grid-template-columns:1fr;min-height:70vh}.friend-chat{min-height:300px}.friend-list{max-height:220px}}.toast{position:fixed;z-index:100;left:50%;bottom:24px;transform:translate(-50%,10px);opacity:0;pointer-events:none;padding:11px 18px;background:#11151b;border:1px solid #ff465555;color:#fff;font:800 9px Orbitron;transition:.18s}.toast.show{opacity:1;transform:translate(-50%,0)}
+.toast{position:fixed;z-index:100;left:50%;bottom:24px;transform:translate(-50%,10px);opacity:0;pointer-events:none;padding:11px 18px;background:#11151b;border:1px solid #ff465555;color:#fff;font:800 9px Orbitron;transition:.18s}.toast.show{opacity:1;transform:translate(-50%,0)}
 @media(max-width:1050px){.main{grid-template-columns:210px 1fr}.right{display:none}}@media(max-width:700px){.top{padding:0 12px}.iconbar{margin-left:12px;gap:2px}.icon{width:38px;height:44px}.icon span{display:none}.account .wallet{display:none}.main{display:block;height:calc(100% - 76px);padding:8px}.left{display:none}.center{height:100%}.play{width:250px}.hero h1{font-size:32px}}
 </style>
 </head>
@@ -41,7 +41,7 @@ body:before{content:"";position:absolute;inset:0;pointer-events:none;background:
     <button class="icon" data-view="collection" title="Collection">▣<span>COLL</span></button>
     <button class="icon" data-view="store" title="Store">◇<span>STORE</span></button>
     <button class="icon" data-view="missions" title="Missions">◆<span>MISSIONS</span></button>
-    <button class="icon" data-view="armory" title="Armory">⚔<span>ARMORY</span></button><button class="icon friends" data-view="friends" title="Friends">♟<span>FRIENDS</span></button>
+    <button class="icon" data-view="armory" title="Armory">⚔<span>ARMORY</span></button>
   </nav>
   <div class="account">
     <div class="wallet">₢ <b class="crix" id="crix">0</b></div>
@@ -92,9 +92,9 @@ body:before{content:"";position:absolute;inset:0;pointer-events:none;background:
 <script>
 "use strict";
 // ============================================================
-// NORMAL CODES — ALWAYS AVAILABLE, NO ADMIN TOGGLE REQUIRED
-// Edit this array when you add/remove regular mission codes.
-// Keep the code names/rewards synced with the redeem-code function.
+// NORMAL CODES — ALWAYS ACTIVE. EDIT THIS ARRAY FOR REGULAR CODES.
+// These do not use the admin enable/disable switches.
+// Rewards are validated server-side by the redeem-code function.
 // ============================================================
 const NORMAL_CODES=[
   {name:"WELCOME",crix_reward:250,m_tokens_reward:0},
@@ -148,35 +148,9 @@ function catalog(type){
  });
 }
 function openModal(title){$("modalTitle").textContent=title;modal.classList.add("open")}
-async function social(action,body={}){
- const {data:{session:s}}=await sb.auth.getSession();if(!s?.access_token)throw Error("SESSION EXPIRED");
- const {data,error}=await sb.functions.invoke("social",{body:{action,...body},headers:{Authorization:"Bearer "+s.access_token}});
- if(error||!data?.ok)throw Error(data?.error||error?.message||"SOCIAL REQUEST FAILED");return data;
-}
-let socialFriends=[],socialRequests=[],activeFriend=null,socialChannel=null;
-function escText(s){return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[m]))}
-async function friendsView(){
- openModal("FRIENDS // SOCIAL");
- modalContent.innerHTML='<div class="friends-shell"><section class="friend-list"><div class="friend-search"><input class="code" id="friendSearch" placeholder="SEARCH PILOT" maxlength="40"><button class="action" id="friendFind">FIND</button></div><div id="friendRequests"></div><div class="label" style="margin:14px 0 8px">YOUR FRIENDS</div><div id="friendsList"></div><div class="label" style="margin:14px 0 8px">SEARCH RESULTS</div><div id="friendResults"></div></section><section class="friend-chat"><div class="chat-head"><b id="chatName">SELECT A FRIEND</b></div><div class="chat-messages" id="chatMessages"><div class="empty">Choose a friend to start chatting.</div></div><div class="chat-send"><input class="code" id="chatInput" maxlength="1000" placeholder="TYPE MESSAGE..."><button class="action" id="chatSend">SEND</button></div></section></div>';
- $("friendFind").onclick=searchFriends;$("friendSearch").onkeydown=e=>{if(e.key==="Enter")searchFriends()};$("chatSend").onclick=sendChat;$("chatInput").onkeydown=e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();sendChat()}};
- await loadSocial(); if(socialChannel)sb.removeChannel(socialChannel);
- socialChannel=sb.channel("gsm-friend-messages").on("postgres_changes",{event:"INSERT",schema:"public",table:"friend_messages"},payload=>{const m=payload.new;if(activeFriend&&(m.sender_id===activeFriend.id||m.receiver_id===activeFriend.id))renderMessage(m);}).subscribe();
-}
-async function loadSocial(){const d=await social("list");socialFriends=d.friends||[];socialRequests=d.requests||[];renderSocialLists()}
-function renderSocialLists(){
- $("friendRequests").innerHTML=socialRequests.length?'<div class="label" style="margin:4px 0 8px">FRIEND REQUESTS</div>'+socialRequests.map(r=>'<div class="request"><b>'+escText(r.username)+'</b><div class="request-actions"><button class="action" data-accept="'+r.id+'">ACCEPT</button><button class="action" data-decline="'+r.id+'">DECLINE</button></div></div>').join(""):"";
- $("friendsList").innerHTML=socialFriends.length?socialFriends.map(f=>'<div class="friend-row"><div><b>'+escText(f.username)+'</b><small>FRIEND</small></div><button class="action" data-chat="'+f.id+'">CHAT</button></div>').join(""):'<div class="empty">No friends yet.</div>';
- document.querySelectorAll("[data-accept]").forEach(b=>b.onclick=async()=>{try{await social("respond",{request_id:Number(b.dataset.accept),accept:true});await loadSocial();toast("FRIEND ADDED")}catch(e){toast(e.message)}});
- document.querySelectorAll("[data-decline]").forEach(b=>b.onclick=async()=>{try{await social("respond",{request_id:Number(b.dataset.decline),accept:false});await loadSocial();toast("REQUEST DECLINED")}catch(e){toast(e.message)}});
- document.querySelectorAll("[data-chat]").forEach(b=>b.onclick=()=>openChat(b.dataset.chat));
-}
-async function searchFriends(){const q=$("friendSearch").value.trim();if(q.length<2){$("friendResults").innerHTML='<div class="empty">Enter at least 2 characters.</div>';return}try{const d=await social("search",{query:q});$("friendResults").innerHTML=(d.players||[]).map(p=>{let action=p.relationship==="accepted"?"FRIENDS":p.relationship==="pending"?(p.requester_id===session.user.id?"SENT":"RESPOND"):"ADD";return '<div class="friend-row"><div><b>'+escText(p.username||"PILOT")+'</b><small>'+escText(p.id)+'</small></div><button class="action" data-add="'+p.id+'" data-state="'+p.relationship+'">'+action+'</button></div>'}).join("")||'<div class="empty">No pilots found.</div>';document.querySelectorAll("[data-add]").forEach(b=>b.onclick=async()=>{if(b.dataset.state!=="none")return;try{await social("send_request",{user_id:b.dataset.add});await searchFriends();toast("FRIEND REQUEST SENT")}catch(e){toast(e.message)}})}catch(e){toast(e.message)}}
-async function openChat(id){activeFriend=socialFriends.find(x=>x.id===id)||{id,username:"PILOT"};$("chatName").textContent=activeFriend.username.toUpperCase();$("chatMessages").innerHTML='<div class="empty">LOADING CHAT...</div>';try{const d=await social("messages",{user_id:id});$("chatMessages").innerHTML="";(d.messages||[]).forEach(renderMessage);$("chatMessages").scrollTop=$("chatMessages").scrollHeight}catch(e){toast(e.message)}}
-function renderMessage(m){if(!activeFriend)return;const mine=m.sender_id===session.user.id;const e=document.createElement("div");e.className="bubble"+(mine?" mine":"");e.innerHTML=escText(m.message)+'<small>'+new Date(m.created_at).toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"})+'</small>';$("chatMessages").appendChild(e);$("chatMessages").scrollTop=$("chatMessages").scrollHeight}
-async function sendChat(){if(!activeFriend)return toast("SELECT A FRIEND");const input=$("chatInput"),message=input.value.trim();if(!message)return;input.value="";try{const d=await social("send_message",{user_id:activeFriend.id,message});renderMessage(d.message)}catch(e){toast(e.message)}}
-\nfunction openView(view){
+function openView(view){
  document.querySelectorAll("[data-view]").forEach(b=>b.classList.toggle("active",b.dataset.view===view));
- if(view==="play"){modal.classList.remove("open");return}\n if(view==="friends"){friendsView();return}
+ if(view==="play"){modal.classList.remove("open");return}
  openModal(view.toUpperCase());
  if(view==="collection"){catalog("ship")}
  else if(view==="store"){catalog(null)}

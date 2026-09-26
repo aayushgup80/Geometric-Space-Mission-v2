@@ -109,7 +109,7 @@ function toast(t){const e=$("toast");e.textContent=t;e.classList.add("show");cle
 function sound(id){const a=$(id);if(!a)return;try{a.currentTime=0;a.play().catch(()=>{})}catch(e){}}
 document.addEventListener("pointerover",e=>{if(e.target.closest("button"))sound("hover")});
 document.addEventListener("click",e=>{if(e.target.closest("button")){sound("click");$("music")?.play().catch(()=>{})}});
-function nextLevelXp(level){return Math.floor(300*Math.pow(1.5,Math.max(0,level-1)))}
+function nextLevelXp(level){if(level<=1)return 300;if(level===2)return 750;return Math.floor(750*Math.pow(1.5,level-2))}
 function wallet(){const c=Number(profile?.crix||0).toLocaleString(),m=Number(profile?.m_tokens||0).toLocaleString();$("crix").textContent=c;$("crix2").textContent=c;$("tokens").textContent=m;$("tokens2").textContent=m}
 function item(id){return items.find(x=>x.id===id)}
 function renderLoadout(){const s=item(loadout.ship_id)||item("ship_default"),w=item(loadout.weapon_id)||item("weapon_default_blaster"),p=item(loadout.pilot_id);$("shipName").textContent=(s?.name||"SCOUT").toUpperCase();$("weaponName").textContent=(w?.name||"BLASTER").toUpperCase();$("pilotLoad").textContent=(p?.name||"NONE").toUpperCase()}

@@ -28,4 +28,8 @@ canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
 <div class="menu" id="message-box"><section class="card"><div class="eyebrow">MISSION CONTROL // COMBAT SIMULATION</div><div class="title" id="menu-title">MISSION READY</div><div class="info" id="menu-info">Initialize combat systems.</div><div class="launch"><button class="btn primary" id="start-button">LAUNCH MISSION</button></div></section></div>
 <div class="controls"><div class="cluster"><button class="ctrl" id="pause-button" title="Pause">Ⅱ</button><button class="ctrl" id="move-left-btn">◀</button><button class="ctrl" id="move-right-btn">▶</button></div><div class="cluster"><button class="ctrl abilityBtn" id="ability-btn">⚡</button><button class="ctrl fire" id="fire-btn">FIRE</button></div></div>
 <audio id="uiHover" preload="auto" src="sounds/button-hover.mp3"></audio><audio id="uiClick" preload="auto" src="sounds/button-click.mp3"></audio><audio id="bulletShoot" preload="auto" src="sounds/bullet shoot.wav"></audio><audio id="hullDamage" preload="auto" src="sounds/damage_hull_from_bullet.wav"></audio>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.83.0/dist/umd/supabase.min.js"></script><script src="game.js"></script></main></body></html>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.83.0/dist/umd/supabase.min.js"></script><script src="game.js"></script></main><audio id="bgMusic" loop preload="auto" src="sounds/lobby-music.wav"></audio>
+<script>
+(()=>{const m=document.getElementById("bgMusic");if(!m)return;const start=()=>{m.volume=0.32;m.play().catch(()=>{})};document.addEventListener("pointerdown",start,{once:true});document.addEventListener("keydown",start,{once:true});})();
+</script>
+</body></html>

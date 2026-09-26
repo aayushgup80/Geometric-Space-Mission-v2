@@ -58,7 +58,25 @@ const sb=window.supabase.createClient("https://eylmduhkjrvpowvuejex.supabase.co"
 const $=id=>document.getElementById(id);
 function msg(el,text,ok=false){el.textContent=text;el.className="msg"+(ok?" ok":"")}
 async function checkAccess(){const {data:{session}}=await sb.auth.getSession();if(!session?.user){const next=encodeURIComponent(location.href);location.replace("https://toucan-store.netlify.app/account.html?next="+next);return false;}msg($("loginMsg"),"ACCOUNT FOUND // CHECKING GSM V2 OWNERSHIP...",true);const r=await fetch("https://eylmduhkjrvpowvuejex.supabase.co/functions/v1/store-api",{method:"POST",headers:{"Content-Type":"application/json","apikey":"sb_publishable_a23t-KV73iSoBA29igsnAQ_phuSvlEb","Authorization":"Bearer "+session.access_token},body:JSON.stringify({action:"entitlement",game_slug:"gsm-v2"})});const j=await r.json().catch(()=>({}));if(!r.ok)return msg($("loginMsg"),j.error||"OWNERSHIP CHECK FAILED.");if(j.owned){msg($("loginMsg"),"GSM V2 OWNED // LAUNCHING MISSION CONTROL...",true);location.replace("lobby.html");return true}const code=$("purchaseCode").value.trim();if(!code)return msg($("loginMsg"),"PURCHASE CODE REQUIRED FOR THIS TOUCAN ACCOUNT.");msg($("loginMsg"),"LINKING PURCHASE CODE...");const rr=await fetch("https://eylmduhkjrvpowvuejex.supabase.co/functions/v1/store-api",{method:"POST",headers:{"Content-Type":"application/json","apikey":"sb_publishable_a23t-KV73iSoBA29igsnAQ_phuSvlEb","Authorization":"Bearer "+session.access_token},body:JSON.stringify({action:"redeem_code",game_slug:"gsm-v2",purchase_code:code})});const rd=await rr.json().catch(()=>({}));if(!rr.ok)return msg($("loginMsg"),rd.error==="INVALID_OR_USED_CODE"?"INVALID OR ALREADY USED PURCHASE CODE.":rd.error||"PURCHASE CODE LINK FAILED.");msg($("loginMsg"),"PURCHASE CODE LINKED // LAUNCHING MISSION CONTROL...",true);location.replace("lobby.html");return true}
-async function boot(){const {data:{session}}=await sb.auth.getSession();if(session?.user){msg($("loginMsg"),"SESSION READY // CLICK ENTER TO CHECK GSM V2 OWNERSHIP.",true);$("loginEmail").value=session.user.email||"";$("switchAccount").style.display="block";}else{const next=encodeURIComponent(location.href);location.replace("https://toucan-store.netlify.app/account.html?next="+next);}}
+async function boot(){
+  const hash=new URLSearchParams(location.hash.replace(/^#/,""));
+  const accessToken=hash.get("toucan_access_token");
+  const refreshToken=hash.get("toucan_refresh_token");
+  if(accessToken){
+    const {error}=await sb.auth.setSession({access_token:accessToken,refresh_token:refreshToken||""});
+    history.replaceState(null,"",location.pathname+location.search);
+    if(error){msg($("loginMsg"),"TOUCAN SESSION HANDOFF FAILED // SIGN IN AGAIN.");return;}
+  }
+  const {data:{session}}=await sb.auth.getSession();
+  if(session?.user){
+    msg($("loginMsg"),"SESSION READY // CLICK ENTER TO CHECK GSM V2 OWNERSHIP.",true);
+    $("loginEmail").value=session.user.email||"";
+    $("switchAccount").style.display="block";
+  }else{
+    const next=encodeURIComponent(location.href);
+    location.replace("https://toucan-store.netlify.app/account.html?next="+next);
+  }
+}
 boot();
 
 

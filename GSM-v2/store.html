@@ -19,4 +19,13 @@ function tick(){if(!expires)return;const ms=Math.max(0,new Date(expires)-Date.no
 (async()=>{try{await auth();const d=await api("ship_data");expires=d.shop[0]?.expires_at;setInterval(tick,1000);tick();render(d)}catch(e){document.getElementById("shop").innerHTML='<div class="notice">'+esc(e.message)+'</div>'}})();
 function render(d){document.getElementById("shop").innerHTML=d.shop.map(x=>{const s=d.ships.find(y=>y.id===x.ship_id),st=s?.stats||{};return '<article class="card ship"><span class="tag">SLOT '+x.slot_index+' · '+esc(st.rarity)+'</span><div class="ship-art" style="color:'+(colors[x.ship_id]||"#00eaff")+'">'+esc(s?.name?.toUpperCase()||x.ship_id)+'</div><h2>'+esc(s?.name||x.ship_id)+'</h2><div class="row"><span>CARD PRICE</span><b>₢ '+Number(x.price_crix).toLocaleString()+'</b></div><div class="row"><span>REQUIRED</span><b>'+st.card_required+' CARDS</b></div><button class="btn '+(x.purchased?"good":"primary")+'" '+(x.purchased?"disabled":"")+' onclick="buyCard('+x.slot_index+')">'+(x.purchased?"OUT OF STOCK":"BUY CARD")+"</button></article>"}).join("")}
 async function buyCard(slot){try{const d=await api("buy_ship_card",{slot});location.reload()}catch(e){alert(e.message)}}
-</script></body></html>
+</script><audio id="bgMusic" loop preload="auto" src="sounds/lobby-music.wav"></audio>
+<script>
+(()=>{const m=document.getElementById("bgMusic");if(!m)return;const start=()=>{m.volume=0.32;m.play().catch(()=>{})};document.addEventListener("pointerdown",start,{once:true});document.addEventListener("keydown",start,{once:true});})();
+</script>
+<audio id="uiHover" preload="auto" src="sounds/button-hover.mp3"></audio>
+<audio id="uiClick" preload="auto" src="sounds/button-click.mp3"></audio>
+<script>
+(()=>{const h=document.getElementById("uiHover"),c=document.getElementById("uiClick");const play=a=>{if(!a)return;try{a.currentTime=0;a.play().catch(()=>{})}catch(e){}};document.addEventListener("pointerover",e=>{if(e.target.closest("button,a,[role=\"button\"]"))play(h)});document.addEventListener("click",e=>{if(e.target.closest("button,a,[role=\"button\"]"))play(c)});})();
+</script>
+</body></html>

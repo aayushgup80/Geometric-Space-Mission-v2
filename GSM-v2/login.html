@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>GSM // Secure Access</title>
+<title>GSM // Toucan Access</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&display=swap');
 *{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#02040a;color:#eef8ff;font-family:Orbitron,system-ui,sans-serif}
@@ -30,7 +30,7 @@ form{position:relative}.field{margin-bottom:13px}.field label{display:block;colo
 </head>
 <body>
 <canvas id="stars"></canvas><div class="scan"></div><div class="vignette"></div>
-<div class="corner tl">GSM-V2 // AUTH NODE <b>01</b></div><div class="corner br">SECURE LINK // <b>ONLINE</b></div>
+<div class="corner tl">TOUCAN GAMES // AUTH NODE <b>01</b></div><div class="corner br">SECURE LINK // <b>ONLINE</b></div>
 <main class="shell">
 <section class="hero">
 <div class="eyebrow">GEOMETRIC SPACE MISSION // V2</div>
@@ -39,7 +39,7 @@ form{position:relative}.field{margin-bottom:13px}.field label{display:block;colo
 <div class="hudline"><span>AUTH <b>READY</b></span><span>COMMS <b>ONLINE</b></span><span>GATE <b>LOCKED</b></span></div>
 </section>
 <section class="card">
-<div class="cardhead"><div class="brand">GSM // V2<small>MISSION CONTROL ACCESS</small></div><div class="online"><i>●</i> SECURE</div></div>
+<div class="cardhead"><div class="brand">TOUCAN // GAMES<small>MASTER ACCOUNT ACCESS</small></div><div class="online"><i>●</i> SECURE</div></div>
 <div class="tabs"><button class="tab active" id="loginTab">SIGN IN</button><button class="tab" id="signupTab">CREATE ACCOUNT</button></div>
 <form id="loginForm">
 <div class="field"><label>EMAIL</label><input id="loginEmail" type="email" autocomplete="email" placeholder="pilot@mission.net" required></div>
@@ -52,14 +52,14 @@ form{position:relative}.field{margin-bottom:13px}.field label{display:block;colo
 <div class="field"><label>PASSWORD // 8+ CHARACTERS</label><input id="signupPassword" type="password" minlength="8" autocomplete="new-password" placeholder="••••••••" required></div>
 <button class="submit">INITIALIZE PILOT</button><div id="signupMsg" class="msg"></div>
 </form>
-<div class="foot">NO GUEST ACCOUNTS. YOUR <b>LOADOUT, CURRENCY & PROGRESS</b> STAY LINKED TO YOUR PILOT ACCOUNT.</div>
+<div class="foot">NO GUEST ACCOUNTS. YOUR <b>TOUCAN ACCOUNT</b> WORKS ACROSS YOUR TOUCAN GAMES.</div>
 </section>
 </main>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 const uiHover=new Audio("sounds/button-hover.mp3");
 const uiClick=new Audio("sounds/button-click.mp3");
-const sb=window.supabase.createClient("https://ccdllfswfhtgcolkugbz.supabase.co","sb_publishable_LPd-zxWUKM8c1p2P9sbbuA_EmhtqQr5");
+const sb=window.supabase.createClient("https://eylmduhkjrvpowvuejex.supabase.co","sb_publishable_a23t-KV73iSoBA29igsnAQ_phuSvlEb");
 const $=id=>document.getElementById(id);
 function msg(el,text,ok=false){el.textContent=text;el.className="msg"+(ok?" ok":"")}
 async function boot(){const {data:{session}}=await sb.auth.getSession();if(session?.user)location.replace("lobby.html")}

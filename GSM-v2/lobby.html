@@ -118,8 +118,53 @@ function catalog(type){const arr=items.filter(x=>!type||x.item_type===type);moda
 function openModal(title){$("modalTitle").textContent=title;modal.classList.add("open")}
 function openView(view){document.querySelectorAll("[data-view]").forEach(b=>b.classList.toggle("active",b.dataset.view===view));if(view==="play"){modal.classList.remove("open");return}openModal(view.toUpperCase());if(view==="collection")catalog("ship");else if(view==="store")catalog(null);else if(view==="armory")catalog("weapon");else if(view==="missions"){modalContent.innerHTML='<div class="grid"><article class="item"><h3>SECTOR SURVIVAL</h3><p>Endless combat. Difficulty scales as your level rises.</p><button class="action" id="missionPlay">PLAY</button></article><article class="item"><h3>HULL PROTOCOL</h3><p>Hull reaching 0% immediately ends the mission.</p></article><article class="item"><h3>SAVE PROTOCOL</h3><p>Pause with ESC, then use SAVE + EXIT.</p></article></div>';$("missionPlay").onclick=()=>location.href="game.html"}}
 function codeTerminal(){openModal("CODE TERMINAL");modalContent.innerHTML='<article class="item"><h3>REDEEM MISSION CODE</h3><p>One redemption per code, per pilot.</p><input class="code" id="code" placeholder="ENTER CODE" maxlength="32"><button class="action" id="redeem" style="margin-top:10px">REDEEM</button><p id="result"></p></article>';$("redeem").onclick=async()=>{const code=$("code").value.trim();if(!code){$("result").textContent="ENTER A CODE";return}try{const d=await gsmApi("redeem_code",{code});profile.crix=d.crix;profile.m_tokens=d.m_tokens;wallet();$("result").textContent="REDEEMED // "+JSON.stringify(d.reward)}catch(e){$("result").textContent=e.message||"REDEMPTION FAILED"}}}
-function profileModal(){openModal("TOUCAN PILOT PROFILE");const email=session?.user?.email||"—";modalContent.innerHTML='<div class="grid"><article class="item"><h3>'+((profile?.username||"PILOT").toUpperCase())+'</h3><p>TOUCAN EMAIL: '+email+'</p><p>₢ '+Number(profile?.crix||0).toLocaleString()+" Crix</p><p>◆ "+Number(profile?.m_tokens||0)+" M-Tokens</p></article><article class="item"><h3>LOADOUT</h3><p>SHIP: "+$("shipName").textContent+"</p><p>WEAPON: "+$("weaponName").textContent+"</p><p>PILOT: "+$("pilotLoad").textContent+'</p></article><article class="item"><h3>ACCOUNT</h3><p>MASTER ACCOUNT: TOUCAN GAMES</p><button class="action" id="logout">SIGN OUT</button></article></div>';$("logout").onclick=async()=>{await sb.auth.signOut();location.replace("login.html")}}
-async function boot(){try{const q=await sb.auth.getSession();session=q.data.session;if(!session){location.replace("login.html");return}const d=await gsmApi("bootstrap");profile=d.profile;items=d.items||[];inventory=new Set(d.inventory||[]);loadout=d.loadout||{};$("pilot").textContent=(profile.username||"PILOT").toUpperCase();$("profile").textContent=(profile.username||"P").slice(0,1).toUpperCase();wallet();renderLoadout();$("music").volume=.22;openView("play")}catch(e){console.error("LOBBY BOOT:",e);$("pilot").textContent="SYNC ERROR";toast("LOBBY ERROR // "+(e.message||"CHECK CONSOLE"))}}
+function profileModal(){
+  openModal("TOUCAN PILOT PROFILE");
+  const email=session?.user?.email||"—";
+  const username=(profile?.username||"PILOT").toUpperCase();
+  const crix=Number(profile?.crix||0).toLocaleString();
+  const tokens=Number(profile?.m_tokens||0).toLocaleString();
+  const ship=$("shipName").textContent;
+  const weapon=$("weaponName").textContent;
+  const pilot=$("pilotLoad").textContent;
+  modalContent.innerHTML=`
+    <div class="grid">
+      <article class="item"><h3>${username}</h3><p>TOUCAN EMAIL: ${email}</p><p>₢ ${crix} Crix</p><p>◆ ${tokens} M-Tokens</p></article>
+      <article class="item"><h3>LOADOUT</h3><p>SHIP: ${ship}</p><p>WEAPON: ${weapon}</p><p>PILOT: ${pilot}</p></article>
+      <article class="item"><h3>ACCOUNT</h3><p>MASTER ACCOUNT: TOUCAN GAMES</p><button class="action" id="logout">SIGN OUT</button></article>
+    </div>`;
+  $("logout").onclick=async()=>{await sb.auth.signOut();location.replace("login.html")};
+}
+async function checkToucanOwnership(){
+  const r=await fetch(TOUCAN_URL+"/functions/v1/store-api",{
+    method:"POST",
+    headers:{apikey:TOUCAN_KEY,Authorization:"Bearer "+session.access_token,"Content-Type":"application/json"},
+    body:JSON.stringify({action:"entitlement",game_slug:"gsm-v2"})
+  });
+  const d=await r.json().catch(()=>({}));
+  if(!r.ok||d?.error)throw Error(d?.error||"TOUCAN OWNERSHIP CHECK FAILED");
+  return !!d.owned;
+}
+async function boot(){
+  try{
+    const q=await sb.auth.getSession();
+    session=q.data.session;
+    if(!session){location.replace("login.html");return}
+    if(!(await checkToucanOwnership())){
+      location.replace("login.html?reason=ownership_required");
+      return;
+    }
+    const d=await gsmApi("bootstrap");
+    profile=d.profile;items=d.items||[];inventory=new Set(d.inventory||[]);loadout=d.loadout||{};
+    $("pilot").textContent=(profile.username||"PILOT").toUpperCase();
+    $("profile").textContent=(profile.username||"P").slice(0,1).toUpperCase();
+    wallet();renderLoadout();$("music").volume=.22;openView("play");
+  }catch(e){
+    console.error("LOBBY BOOT:",e);
+    $("pilot").textContent="SYNC ERROR";
+    toast("LOBBY ERROR // "+(e.message||"CHECK CONSOLE"));
+  }
+}
 $("play").onclick=()=>location.href="game.html";$("profile").onclick=profileModal;$("codeOpen").onclick=codeTerminal;$("close").onclick=()=>modal.classList.remove("open");modal.onclick=e=>{if(e.target===modal)modal.classList.remove("open")};document.querySelectorAll("[data-view]").forEach(b=>b.onclick=()=>openView(b.dataset.view));boot();
 </script>
 </body>

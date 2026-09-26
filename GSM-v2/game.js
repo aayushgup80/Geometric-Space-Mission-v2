@@ -1,9 +1,10 @@
 (()=>{"use strict";
-const URL="https://ccdllfswfhtgcolkugbz.supabase.co",KEY="sb_publishable_LPd-zxWUKM8c1p2P9sbbuA_EmhtqQr5";
+const TOUCAN_URL="https://eylmduhkjrvpowvuejex.supabase.co",TOUCAN_KEY="sb_publishable_a23t-KV73iSoBA29igsnAQ_phuSvlEb";const GSM_URL="https://ccdllfswfhtgcolkugbz.supabase.co",GSM_KEY="sb_publishable_LPd-zxWUKM8c1p2P9sbbuA_EmhtqQr5";
 if(!window.supabase){document.getElementById("menu-info").textContent="Supabase failed to load. Open this page through Live Server (http://), not file://.";return}
-const sb=window.supabase.createClient(URL,KEY),$=id=>document.getElementById(id),canvas=$("game-canvas"),ctx=canvas.getContext("2d",{alpha:false});
+const sb=window.supabase.createClient(TOUCAN_URL,TOUCAN_KEY),$=id=>document.getElementById(id),canvas=$("game-canvas"),ctx=canvas.getContext("2d",{alpha:false});
 let W=0,H=0,state="START",last=0,user,profile,crix=10,score=0,xp=0,level=1,lives=3,kills=0,killFlash=0,killRotation=0,killHue=185,player,bullets=[],enemies=[],stars=[],sparks=[],spawn=0,fireClock=0,abilityClock=0,invuln=0,left=false,right=false,fire=false,fpsFrames=0,fpsStamp=0,fpsValue=0,weapon={damage:25,delay:.22,dual:false,color:"#76ff03"};
 const music=new Audio("sounds/gameplay_music.flac");music.loop=true;music.volume=.28;const killBanner=$("kill-banner"),killCount=$("kill-count"),pauseOverlay=$("pause-overlay");const shell=$("game-container");
+async function gsmApi(action,body={}){if(!user?.access_token)throw Error("TOUCAN SESSION EXPIRED");const r=await fetch(GSM_URL+"/functions/v1/toucan-api",{method:"POST",headers:{apikey:GSM_KEY,Authorization:"Bearer "+user.access_token,"Content-Type":"application/json"},body:JSON.stringify({action,...body})});const d=await r.json().catch(()=>({}));if(!r.ok||d?.ok===false)throw Error(d?.error||"GAME SERVER REQUEST FAILED");return d}
 function musicOn(){music.play().catch(()=>{})}function sound(id){const a=$(id);if(!a)return;try{a.currentTime=0;a.play().catch(()=>{})}catch(e){}}
 document.addEventListener("mouseover",e=>{if(e.target.closest("button"))sound("uiHover")});document.addEventListener("click",e=>{if(e.target.closest("button")){sound("uiClick");musicOn()}});
 function resize(){W=canvas.clientWidth;H=canvas.clientHeight;const d=Math.min(devicePixelRatio||1,2);canvas.width=Math.floor(W*d);canvas.height=Math.floor(H*d);ctx.setTransform(d,0,0,d,0,0);if(player){player.y=H-105;player.x=Math.max(24,Math.min(W-24,player.x))}}
@@ -46,18 +47,7 @@ applySettings();async function saveMissionAndExit(){
   const info=$("temp-message-container");
   info.classList.add("show"); info.textContent="UPLOADING MISSION // PLEASE WAIT";
   try{
-    let {data:{session}}=await sb.auth.getSession();
-    if(!session?.access_token){
-      const refreshed=await sb.auth.refreshSession();
-      session=refreshed.data.session;
-    }
-    if(!session?.access_token) throw new Error("SESSION EXPIRED — SIGN IN AGAIN");
-    const {data:payload,error:functionError}=await sb.functions.invoke("save-mission",{
-      body:{score,xp,kills},
-      headers:{"Authorization":"Bearer "+session.access_token}
-    });
-    if(functionError) throw new Error(functionError.message||"SAVE FAILED");
-    if(!payload?.ok) throw new Error(payload?.error||"SAVE FAILED");
+    const payload=await gsmApi("save_mission",{score,xp,kills});
     crix=Number(payload.crix??crix);
     info.textContent="MISSION SAVED // +"+Number(payload.earned_crix||0)+" CRIX";
     btn.textContent="SAVED ✓";
@@ -66,8 +56,7 @@ applySettings();async function saveMissionAndExit(){
   }catch(e){
     console.error("SAVE + EXIT:",e);
     info.textContent="SAVE FAILED // "+(e.message||"TRY AGAIN");
-    btn.textContent="RETRY SAVE";
-    btn.disabled=false; btn.dataset.busy="0";
+    btn.textContent="RETRY SAVE";btn.disabled=false;btn.dataset.busy="0";
     setTimeout(()=>info.classList.remove("show"),2600);
   }
 }

@@ -100,7 +100,7 @@ const $=id=>document.getElementById(id),modal=$("modal"),modalContent=$("modalCo
 let session=null,profile=null,items=[],inventory=new Set(),loadout={};
 async function gsmApi(action,body={}){
   if(!session?.access_token)throw Error("TOUCAN SESSION EXPIRED");
-  const r=await fetch(GSM_URL+"/functions/v1/toucan-api",{method:"POST",headers:{apikey:GSM_KEY,Authorization:"Bearer "+session.access_token,"Content-Type":"application/json"},body:JSON.stringify({action,...body})});
+  const r=await fetch(GSM_URL+"/functions/v1/toucan-api",{method:"POST",headers:{apikey:GSM_KEY,Authorization:"Bearer "+session.access_token,"Content-Type":"application/json"},body:JSON.stringify({...body,action})});
   const d=await r.json().catch(()=>({}));
   if(!r.ok||d?.ok===false)throw Error(d?.error||"GAME SERVER REQUEST FAILED");
   return d;

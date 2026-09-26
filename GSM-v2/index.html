@@ -276,5 +276,9 @@ document.addEventListener("keydown",e=>{
   if(e.key==="Enter")launch();
 });
 </script>
+<audio id="bgMusic" loop preload="auto" src="sounds/lobby-music.wav"></audio>
+<script>
+(()=>{const m=document.getElementById("bgMusic");if(!m)return;const start=()=>{m.volume=0.32;m.play().catch(()=>{})};document.addEventListener("pointerdown",start,{once:true});document.addEventListener("keydown",start,{once:true});})();
+</script>
 </body>
 </html>

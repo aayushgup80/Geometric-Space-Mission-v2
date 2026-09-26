@@ -14,7 +14,7 @@ body:before{content:"";position:absolute;inset:0;pointer-events:none;background:
 .top{height:76px;display:flex;align-items:center;padding:0 30px;border-bottom:1px solid #ffffff12;background:#0a0c0fef}
 .logo{font:900 17px Orbitron;letter-spacing:.14em}.logo span{color:#ff4655}.logo small{display:block;color:#737982;font:700 7px Inter;letter-spacing:.34em;margin-top:5px}
 .iconbar{display:flex;align-items:center;gap:7px;margin-left:42px;height:100%}
-.icon{position:relative;width:48px;height:48px;border:1px solid transparent;background:transparent;color:#7d838a;display:grid;place-items:center;font-size:18px;transition:.15s}
+.icon{position:relative;text-decoration:none;width:48px;height:48px;border:1px solid transparent;background:transparent;color:#7d838a;display:grid;place-items:center;font-size:18px;transition:.15s}
 .icon span{position:absolute;bottom:4px;font:800 7px Inter;letter-spacing:.1em}
 .icon:hover,.icon.active{color:#fff;background:#ffffff07;border-color:#ffffff14}.icon.active:after{content:"";position:absolute;left:8px;right:8px;bottom:-15px;height:2px;background:#ff4655}
 .account{margin-left:auto;display:flex;align-items:center;gap:13px}.wallet{font:800 10px Inter;color:#777f88}.wallet b{font:900 13px Orbitron;margin-left:4px}.crix{color:#ffd34f}.token{color:#b98cff}
@@ -37,11 +37,11 @@ body:before{content:"";position:absolute;inset:0;pointer-events:none;background:
 <header class="top">
   <div class="logo"><span>GSM</span> // V2<small>GEOMETRIC SPACE MISSION</small></div>
   <nav class="iconbar">
-    <button class="icon active" data-view="play" title="Play">▶<span>PLAY</span></button>
-    <button class="icon" data-view="collection" title="Collection">▣<span>COLL</span></button>
-    <button class="icon" data-view="store" title="Store">◇<span>STORE</span></button>
-    <button class="icon" data-view="missions" title="Missions">◆<span>MISSIONS</span></button>
-    <button class="icon" data-view="armory" title="Armory">⚔<span>ARMORY</span></button>
+    <a class="icon active" href="lobby.html" title="Play">▶<span>PLAY</span></a>
+    <a class="icon" href="inventory.html" title="Inventory">▣<span>INV</span></a>
+    <a class="icon" href="store.html" title="Daily Store">◇<span>STORE</span></a>
+    <a class="icon" href="marketplace.html" title="Marketplace">◆<span>MARKET</span></a>
+    <a class="icon" href="missions.html" title="Missions">◈<span>MISSIONS</span></a>
   </nav>
   <div class="account">
     <div class="wallet">₢ <b class="crix" id="crix">0</b></div>
@@ -56,7 +56,7 @@ body:before{content:"";position:absolute;inset:0;pointer-events:none;background:
       <div class="name" id="pilot">LOADING</div>
       <div class="stat"><span>STATUS</span><b class="online">ONLINE</b></div>
       <div class="stat"><span>AUTH</span><b>SECURE</b></div>
-      <div class="stat"><span>DATABASE</span><b class="online">SYNCED</b></div>
+      <div class="stat"><span>DATABASE</span><b class="online">SYNCED</b></div><div class="stat"><span>LEVEL</span><b id="level-display">1</b></div><div class="stat"><span>XP</span><b id="xp-display">0/300</b></div>
     </div>
     <div class="card panel">
       <div class="label">EQUIPPED</div>
@@ -77,7 +77,7 @@ body:before{content:"";position:absolute;inset:0;pointer-events:none;background:
   </section>
   <aside class="right">
     <div class="card panel"><div class="label">ACCOUNT</div><div class="stat"><span>CRIX</span><b class="gold" id="crix2">0</b></div><div class="stat"><span>M-TOKENS</span><b id="tokens2">0</b></div></div>
-    <div class="card panel"><div class="label">MISSION PROTOCOL</div><div class="stat"><span>HULL</span><b>100%</b></div><div class="stat"><span>HULL 0%</span><b style="color:#ff5361">GAME OVER</b></div><div class="stat"><span>REWARD</span><b>CRIX + XP</b></div></div>
+    <div class="card panel"><div class="label">MISSION PROTOCOL</div><div class="stat"><span>HULL</span><b>100%</b></div><div class="stat"><span>HULL 0%</span><b style="color:#ff5361">GAME OVER</b></div><div class="stat"><span>REWARD</span><b>CRIX + XP</b></div><div class="stat"><span>NEXT LEVEL</span><b id="next-level-display">300 XP</b></div></div>
     <div class="card panel"><div class="label">MISSION CODES</div><p class="sub">Redeem a mission code for account rewards.</p><button class="action" id="codeOpen">CODE TERMINAL</button></div>
   </aside>
 </section>
@@ -109,6 +109,7 @@ function toast(t){const e=$("toast");e.textContent=t;e.classList.add("show");cle
 function sound(id){const a=$(id);if(!a)return;try{a.currentTime=0;a.play().catch(()=>{})}catch(e){}}
 document.addEventListener("pointerover",e=>{if(e.target.closest("button"))sound("hover")});
 document.addEventListener("click",e=>{if(e.target.closest("button")){sound("click");$("music")?.play().catch(()=>{})}});
+function nextLevelXp(level){return Math.floor(300*Math.pow(1.5,Math.max(0,level-1)))}
 function wallet(){const c=Number(profile?.crix||0).toLocaleString(),m=Number(profile?.m_tokens||0).toLocaleString();$("crix").textContent=c;$("crix2").textContent=c;$("tokens").textContent=m;$("tokens2").textContent=m}
 function item(id){return items.find(x=>x.id===id)}
 function renderLoadout(){const s=item(loadout.ship_id)||item("ship_default"),w=item(loadout.weapon_id)||item("weapon_default_blaster"),p=item(loadout.pilot_id);$("shipName").textContent=(s?.name||"SCOUT").toUpperCase();$("weaponName").textContent=(w?.name||"BLASTER").toUpperCase();$("pilotLoad").textContent=(p?.name||"NONE").toUpperCase()}
@@ -158,14 +159,14 @@ async function boot(){
     profile=d.profile;items=d.items||[];inventory=new Set(d.inventory||[]);loadout=d.loadout||{};
     $("pilot").textContent=(profile.username||"PILOT").toUpperCase();
     $("profile").textContent=(profile.username||"P").slice(0,1).toUpperCase();
-    wallet();renderLoadout();$("music").volume=.22;openView("play");
+    wallet();renderLoadout();$("level-display").textContent=Number(profile.level||1);$("xp-display").textContent=Number(profile.xp||0)+"/"+nextLevelXp(Number(profile.level||1));$("next-level-display").textContent=nextLevelXp(Number(profile.level||1)).toLocaleString()+" XP";$("music").volume=.22;openView("play");
   }catch(e){
     console.error("LOBBY BOOT:",e);
     $("pilot").textContent="SYNC ERROR";
     toast("LOBBY ERROR // "+(e.message||"CHECK CONSOLE"));
   }
 }
-$("play").onclick=()=>location.href="game.html";$("profile").onclick=profileModal;$("codeOpen").onclick=codeTerminal;$("close").onclick=()=>modal.classList.remove("open");modal.onclick=e=>{if(e.target===modal)modal.classList.remove("open")};document.querySelectorAll("[data-view]").forEach(b=>b.onclick=()=>openView(b.dataset.view));boot();
+$("play").onclick=()=>location.href="game.html";$("profile").onclick=profileModal;$("codeOpen").onclick=codeTerminal;$("close").onclick=()=>modal.classList.remove("open");modal.onclick=e=>{if(e.target===modal)modal.classList.remove("open")};boot();
 </script>
 </body>
 </html>

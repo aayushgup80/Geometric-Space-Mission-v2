@@ -16,4 +16,13 @@ $("give-ship").onclick=async()=>{try{if(!selected)throw Error("Select a player f
 $("give-all").onclick=async()=>{try{const c=Math.floor(Number($("all-crix").value||0)),m=Math.floor(Number($("all-tokens").value||0));if(!confirm("Give these rewards to EVERY player?"))return;const d=await invoke("add_currency_all",{crix:c,m_tokens:m});await load();status("REWARDED "+d.updated+" PLAYERS")}catch(e){status(e.message)}};
 $("logout").onclick=async()=>{await sb.auth.signOut();location.href="login.html"};
 (async()=>{try{const r=await sb.auth.getSession();session=r.data.session;if(!session){location.href="login.html";return}await load()}catch(e){status(e.message)}})()})();
-</script></body></html>
+</script><audio id="bgMusic" loop preload="auto" src="sounds/lobby-music.wav"></audio>
+<script>
+(()=>{const m=document.getElementById("bgMusic");if(!m)return;const start=()=>{m.volume=0.32;m.play().catch(()=>{})};document.addEventListener("pointerdown",start,{once:true});document.addEventListener("keydown",start,{once:true});})();
+</script>
+<audio id="uiHover" preload="auto" src="sounds/button-hover.mp3"></audio>
+<audio id="uiClick" preload="auto" src="sounds/button-click.mp3"></audio>
+<script>
+(()=>{const h=document.getElementById("uiHover"),c=document.getElementById("uiClick");const play=a=>{if(!a)return;try{a.currentTime=0;a.play().catch(()=>{})}catch(e){}};document.addEventListener("pointerover",e=>{if(e.target.closest("button,a,[role=\"button\"]"))play(h)});document.addEventListener("click",e=>{if(e.target.closest("button,a,[role=\"button\"]"))play(c)});})();
+</script>
+</body></html>

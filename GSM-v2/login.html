@@ -40,19 +40,14 @@ form{position:relative}.field{margin-bottom:13px}.field label{display:block;colo
 </section>
 <section class="card">
 <div class="cardhead"><div class="brand">TOUCAN // GAMES<small>MASTER ACCOUNT ACCESS</small></div><div class="online"><i>●</i> SECURE</div></div>
-<div class="tabs"><button class="tab active" id="loginTab">SIGN IN</button><button class="tab" id="signupTab">CREATE ACCOUNT</button></div>
+<div class="tabs"><button class="tab active" id="loginTab">TOUCAN SIGN IN</button></div>
 <form id="loginForm">
 <div class="field"><label>EMAIL</label><input id="loginEmail" type="email" autocomplete="email" placeholder="pilot@mission.net" required></div>
 <div class="field"><label>PASSWORD</label><input id="loginPassword" type="password" autocomplete="current-password" placeholder="••••••••" required></div>
 <button class="submit">ENTER MISSION CONTROL</button><div id="loginMsg" class="msg"></div>
 </form>
-<form id="signupForm" style="display:none">
-<div class="field"><label>PILOT CALLSIGN</label><input id="username" minlength="3" maxlength="24" placeholder="NOVA-01" required></div>
-<div class="field"><label>EMAIL</label><input id="signupEmail" type="email" autocomplete="email" placeholder="pilot@mission.net" required></div>
-<div class="field"><label>PASSWORD // 8+ CHARACTERS</label><input id="signupPassword" type="password" minlength="8" autocomplete="new-password" placeholder="••••••••" required></div>
-<button class="submit">INITIALIZE PILOT</button><div id="signupMsg" class="msg"></div>
-</form>
-<div class="foot">NO GUEST ACCOUNTS. YOUR <b>TOUCAN ACCOUNT</b> WORKS ACROSS YOUR TOUCAN GAMES.</div>
+<div id="purchaseBox" style="display:none"><div style="color:#8fe8ff;font-size:10px;letter-spacing:.18em;margin-bottom:14px">ACCOUNT FOUND</div><div style="color:#71849b;font-size:8px;letter-spacing:.12em;line-height:1.7;margin-bottom:18px">THIS TOUCAN ACCOUNT DOES NOT YET OWN GSM V2.<br>ENTER YOUR UNIQUE PURCHASE CODE TO LINK THE GAME TO THIS ACCOUNT.</div><form id="purchaseForm"><div class="field"><label>GSM V2 PURCHASE CODE</label><input id="purchaseCode" autocomplete="off" placeholder="TOUCAN-GSMV2-XXXX-XXXX-XXXX" required></div><button class="submit" type="submit">LINK PURCHASE TO ACCOUNT</button><div id="purchaseMsg" class="msg"></div></form></div>
+<div class="foot">CREATE YOUR ACCOUNT IN <a href="https://aayushgup80.github.io/Toucan-Store/account.html" style="color:#8fe8ff">TOUCAN STORE</a>. PURCHASE CODES are one-time ownership keys and cannot be linked to another account after redemption.</div>
 </section>
 </main>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -62,12 +57,12 @@ const uiClick=new Audio("sounds/button-click.mp3");
 const sb=window.supabase.createClient("https://eylmduhkjrvpowvuejex.supabase.co","sb_publishable_a23t-KV73iSoBA29igsnAQ_phuSvlEb");
 const $=id=>document.getElementById(id);
 function msg(el,text,ok=false){el.textContent=text;el.className="msg"+(ok?" ok":"")}
-async function boot(){const {data:{session}}=await sb.auth.getSession();if(session?.user)location.replace("lobby.html")}
+async function checkAccess(){const {data:{session}}=await sb.auth.getSession();if(!session?.user)return false;msg($("loginMsg"),"ACCOUNT FOUND // CHECKING GAME OWNERSHIP...",true);const r=await fetch("https://eylmduhkjrvpowvuejex.supabase.co/functions/v1/store-api",{method:"POST",headers:{"Content-Type":"application/json","apikey":"sb_publishable_a23t-KV73iSoBA29igsnAQ_phuSvlEb","Authorization":"Bearer "+session.access_token},body:JSON.stringify({action:"entitlement",game_slug:"gsm-v2"})});const j=await r.json();if(j.owned){location.replace("lobby.html");return true}$("loginForm").style.display="none";$("purchaseBox").style.display="block";return true} async function boot(){await checkAccess()}
 boot();
-$("loginTab").onclick=()=>{ $("loginTab").classList.add("active");$("signupTab").classList.remove("active");$("loginForm").style.display="block";$("signupForm").style.display="none" };
-$("signupTab").onclick=()=>{ $("signupTab").classList.add("active");$("loginTab").classList.remove("active");$("loginForm").style.display="none";$("signupForm").style.display="block" };
+
+
 $("loginForm").onsubmit=async e=>{e.preventDefault();msg($("loginMsg"),"AUTHENTICATING...");const {data,error}=await sb.auth.signInWithPassword({email:$("loginEmail").value.trim(),password:$("loginPassword").value});if(error)return msg($("loginMsg"),error.message);msg($("loginMsg"),"ACCESS GRANTED // LAUNCHING...",true);setTimeout(()=>location.replace("lobby.html"),350)};
-$("signupForm").onsubmit=async e=>{e.preventDefault();const username=$("username").value.trim();msg($("signupMsg"),"INITIALIZING PILOT PROFILE...");const {data,error}=await sb.auth.signUp({email:$("signupEmail").value.trim(),password:$("signupPassword").value,options:{data:{username}}});if(error)return msg($("signupMsg"),error.message);if(!data.session)return msg($("signupMsg"),"ACCOUNT CREATED // CHECK YOUR EMAIL, THEN SIGN IN.",true);msg($("signupMsg"),"PILOT INITIALIZED // LAUNCHING...",true);setTimeout(()=>location.replace("lobby.html"),350)};
+$("purchaseForm").onsubmit=async e=>{e.preventDefault();const {data:{session}}=await sb.auth.getSession();if(!session)return msg($("purchaseMsg"),"SESSION EXPIRED // SIGN IN AGAIN.");msg($("purchaseMsg"),"LINKING PURCHASE...");const r=await fetch("https://eylmduhkjrvpowvuejex.supabase.co/functions/v1/store-api",{method:"POST",headers:{"Content-Type":"application/json","apikey":"sb_publishable_a23t-KV73iSoBA29igsnAQ_phuSvlEb","Authorization":"Bearer "+session.access_token},body:JSON.stringify({action:"redeem_code",game_slug:"gsm-v2",purchase_code:$("purchaseCode").value.trim()})});const j=await r.json();if(!r.ok)return msg($("purchaseMsg"),j.error==="INVALID_OR_USED_CODE"?"INVALID OR ALREADY USED PURCHASE CODE.":j.error||"PURCHASE LINK FAILED.");msg($("purchaseMsg"),"PURCHASE LINKED // LAUNCHING MISSION CONTROL...",true);setTimeout(()=>location.replace("lobby.html"),450)};
 document.addEventListener("mouseover",e=>{const el=e.target.closest("button,a,[role=\"button\"]");if(el){uiHover.currentTime=0;uiHover.play().catch(()=>{})}});
 document.addEventListener("click",e=>{const el=e.target.closest("button,a,[role=\"button\"]");if(el){uiClick.currentTime=0;uiClick.play().catch(()=>{})}});
 const c=$("stars"),x=c.getContext("2d");function size(){c.width=innerWidth*devicePixelRatio;c.height=innerHeight*devicePixelRatio;x.scale(devicePixelRatio,devicePixelRatio)}size();addEventListener("resize",()=>{x.setTransform(1,0,0,1,0,0);size()});

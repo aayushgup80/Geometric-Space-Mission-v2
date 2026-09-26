@@ -91,6 +91,17 @@ body:before{content:"";position:absolute;inset:0;pointer-events:none;background:
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.83.0/dist/umd/supabase.min.js"></script>
 <script>
 "use strict";
+// ============================================================
+// NORMAL CODES — ALWAYS AVAILABLE, NO ADMIN TOGGLE REQUIRED
+// Edit this array when you add/remove regular mission codes.
+// Keep the code names/rewards synced with the redeem-code function.
+// ============================================================
+const NORMAL_CODES=[
+  {name:"WELCOME",crix_reward:250,m_tokens_reward:0},
+  {name:"GSMSTART",crix_reward:500,m_tokens_reward:0},
+  {name:"PILOT2026",crix_reward:750,m_tokens_reward:0}
+];
+
 const CONFIG={
   supabaseUrl:"https://ccdllfswfhtgcolkugbz.supabase.co",
   publishableKey:"sb_publishable_LPd-zxWUKM8c1p2P9sbbuA_EmhtqQr5"

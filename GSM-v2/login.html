@@ -89,4 +89,8 @@ const c=$("stars"),x=c.getContext("2d");function size(){c.width=innerWidth*devic
 const stars=Array.from({length:180},()=>({x:Math.random()*innerWidth,y:Math.random()*innerHeight,r:.3+Math.random()*1.6,v:.08+Math.random()*.28}));
 function draw(){x.clearRect(0,0,innerWidth,innerHeight);for(const s of stars){s.y+=s.v;if(s.y>innerHeight)s.y=-2;x.fillStyle="rgba(170,230,255,.55)";x.fillRect(s.x,s.y,s.r,s.r)}requestAnimationFrame(draw)}draw();
 </script>
+<audio id="bgMusic" loop preload="auto" src="sounds/lobby-music.wav"></audio>
+<script>
+(()=>{const m=document.getElementById("bgMusic");if(!m)return;const start=()=>{m.volume=0.32;m.play().catch(()=>{})};document.addEventListener("pointerdown",start,{once:true});document.addEventListener("keydown",start,{once:true});})();
+</script>
 </body></html>

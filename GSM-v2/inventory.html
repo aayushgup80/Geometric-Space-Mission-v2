@@ -8,7 +8,7 @@
 </main><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.83.0/dist/umd/supabase.min.js"></script><script>
 const TOUCAN_URL="https://eylmduhkjrvpowvuejex.supabase.co",TOUCAN_KEY="sb_publishable_a23t-KV73iSoBA29igsnAQ_phuSvlEb",GSM_URL="https://ccdllfswfhtgcolkugbz.supabase.co",GSM_KEY="sb_publishable_LPd-zxWUKM8c1p2P9sbbuA_EmhtqQr5";
 const sb=supabase.createClient(TOUCAN_URL,TOUCAN_KEY);let session;
-async function api(action,body={}){const r=await fetch(GSM_URL+"/functions/v1/toucan-api",{method:"POST",headers:{apikey:GSM_KEY,Authorization:"Bearer "+session.access_token,"Content-Type":"application/json"},body:JSON.stringify({action,...body})});const d=await r.json().catch(()=>({}));if(!r.ok||d?.ok===false)throw Error(d?.error||"REQUEST FAILED");return d}
+async function api(action,body={}){const r=await fetch(GSM_URL+"/functions/v1/toucan-api",{method:"POST",headers:{apikey:GSM_KEY,Authorization:"Bearer "+session.access_token,"Content-Type":"application/json"},body:JSON.stringify({...body,action})});const d=await r.json().catch(()=>({}));if(!r.ok||d?.ok===false)throw Error(d?.error||"REQUEST FAILED");return d}
 async function auth(){const q=await sb.auth.getSession();session=q.data.session;if(!session){location.replace("login.html");throw Error("NO SESSION")}const d=await api("bootstrap");document.getElementById("acct").innerHTML=(d.profile.username||"PILOT").toUpperCase()+"<br><strong>₢ "+Number(d.profile.crix||0).toLocaleString()+"</strong> · LV "+(d.profile.level||1);return d}
 function esc(x){return String(x??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[c]))}
 

@@ -10,7 +10,7 @@ const TOUCAN_URL="https://eylmduhkjrvpowvuejex.supabase.co",TOUCAN_KEY="sb_publi
 const sb=supabase.createClient(TOUCAN_URL,TOUCAN_KEY);let session;
 async function api(action,body={}){const r=await fetch(GSM_URL+"/functions/v1/toucan-api",{method:"POST",headers:{apikey:GSM_KEY,Authorization:"Bearer "+session.access_token,"Content-Type":"application/json"},body:JSON.stringify({action,...body})});const d=await r.json().catch(()=>({}));if(!r.ok||d?.ok===false)throw Error(d?.error||"REQUEST FAILED");return d}
 async function auth(){const q=await sb.auth.getSession();session=q.data.session;if(!session){location.replace("login.html");throw Error("NO SESSION")}const d=await api("bootstrap");document.getElementById("acct").innerHTML=(d.profile.username||"PILOT").toUpperCase()+"<br><strong>₢ "+Number(d.profile.crix||0).toLocaleString()+"</strong> · LV "+(d.profile.level||1);return d}
-function esc(x){return String(x??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",""":"&quot;","'":"&#039;"}[c]))}
+function esc(x){return String(x??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[c]))}
 
 let expires;
 const names={ship_echo:"Echo",ship_nova:"Nova",ship_orchid:"Orchid",ship_haul:"Haul",ship_hydro:"Hydro",ship_zed_black:"Zed Black",ship_vite:"Vite",ship_moraine:"Moraine"};

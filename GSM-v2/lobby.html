@@ -91,114 +91,36 @@ body:before{content:"";position:absolute;inset:0;pointer-events:none;background:
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.83.0/dist/umd/supabase.min.js"></script>
 <script>
 "use strict";
-// ============================================================
-// NORMAL CODES — ALWAYS ACTIVE. EDIT THIS ARRAY FOR REGULAR CODES.
-// These do not use the admin enable/disable switches.
-// Rewards are validated server-side by the redeem-code function.
-// ============================================================
-const NORMAL_CODES=[
-  {name:"WELCOME",crix_reward:250,m_tokens_reward:0},
-  {name:"GSMSTART",crix_reward:500,m_tokens_reward:0},
-  {name:"PILOT2026",crix_reward:750,m_tokens_reward:0}
-];
-
-const CONFIG={
-  supabaseUrl:"https://ccdllfswfhtgcolkugbz.supabase.co",
-  publishableKey:"sb_publishable_LPd-zxWUKM8c1p2P9sbbuA_EmhtqQr5"
-};
-const $=id=>document.getElementById(id);
-const modal=$("modal"), modalContent=$("modalContent");
-let sb=null,session=null,profile=null,items=[],inventory=new Set(),loadout={};
-
+const TOUCAN_URL="https://eylmduhkjrvpowvuejex.supabase.co";
+const TOUCAN_KEY="sb_publishable_a23t-KV73iSoBA29igsnAQ_phuSvlEb";
+const GSM_URL="https://ccdllfswfhtgcolkugbz.supabase.co";
+const GSM_KEY="sb_publishable_LPd-zxWUKM8c1p2P9sbbuA_EmhtqQr5";
+const sb=window.supabase.createClient(TOUCAN_URL,TOUCAN_KEY);
+const $=id=>document.getElementById(id),modal=$("modal"),modalContent=$("modalContent");
+let session=null,profile=null,items=[],inventory=new Set(),loadout={};
+async function gsmApi(action,body={}){
+  if(!session?.access_token)throw Error("TOUCAN SESSION EXPIRED");
+  const r=await fetch(GSM_URL+"/functions/v1/toucan-api",{method:"POST",headers:{apikey:GSM_KEY,Authorization:"Bearer "+session.access_token,"Content-Type":"application/json"},body:JSON.stringify({action,...body})});
+  const d=await r.json().catch(()=>({}));
+  if(!r.ok||d?.ok===false)throw Error(d?.error||"GAME SERVER REQUEST FAILED");
+  return d;
+}
 function toast(t){const e=$("toast");e.textContent=t;e.classList.add("show");clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove("show"),1800)}
 function sound(id){const a=$(id);if(!a)return;try{a.currentTime=0;a.play().catch(()=>{})}catch(e){}}
 document.addEventListener("pointerover",e=>{if(e.target.closest("button"))sound("hover")});
-document.addEventListener("click",e=>{if(e.target.closest("button")){sound("click");const m=$("music");if(m)m.play().catch(()=>{})}});
-
-function wallet(){
- const c=Number(profile?.crix||0).toLocaleString(),m=Number(profile?.m_tokens||0).toLocaleString();
- $("crix").textContent=c;$("crix2").textContent=c;$("tokens").textContent=m;$("tokens2").textContent=m;
-}
+document.addEventListener("click",e=>{if(e.target.closest("button")){sound("click");$("music")?.play().catch(()=>{})}});
+function wallet(){const c=Number(profile?.crix||0).toLocaleString(),m=Number(profile?.m_tokens||0).toLocaleString();$("crix").textContent=c;$("crix2").textContent=c;$("tokens").textContent=m;$("tokens2").textContent=m}
 function item(id){return items.find(x=>x.id===id)}
-function renderLoadout(){
- const s=item(loadout.ship_id)||item("ship_default"),w=item(loadout.weapon_id)||item("weapon_default_blaster"),p=item(loadout.pilot_id);
- $("shipName").textContent=(s?.name||"SCOUT").toUpperCase();
- $("weaponName").textContent=(w?.name||"BLASTER").toUpperCase();
- $("pilotLoad").textContent=(p?.name||"NONE").toUpperCase();
-}
-async function apiAction(action,itemId){
- const {data:{session:s}}=await sb.auth.getSession();
- if(!s?.access_token)throw Error("SESSION EXPIRED");
- const {data,error}=await sb.functions.invoke("game-action",{body:{action,item_id:itemId},headers:{Authorization:"Bearer "+s.access_token}});
- if(error||!data?.ok)throw Error(data?.error||error?.message||"ACTION FAILED");
- return data;
-}
+function renderLoadout(){const s=item(loadout.ship_id)||item("ship_default"),w=item(loadout.weapon_id)||item("weapon_default_blaster"),p=item(loadout.pilot_id);$("shipName").textContent=(s?.name||"SCOUT").toUpperCase();$("weaponName").textContent=(w?.name||"BLASTER").toUpperCase();$("pilotLoad").textContent=(p?.name||"NONE").toUpperCase()}
+async function apiAction(action,itemId){return gsmApi("game_action",{action,item_id:itemId})}
 function price(x){const a=[];if(+x.price_crix)a.push("₢ "+(+x.price_crix).toLocaleString());if(+x.price_m_tokens)a.push("◆ "+x.price_m_tokens);return a.length?a.join(" + "):"FREE"}
-function catalog(type){
- const arr=items.filter(x=>!type||x.item_type===type);
- modalContent.innerHTML='<div class="grid">'+arr.map(x=>{
-  const owned=inventory.has(x.id)||x.id==="ship_default"||x.id==="weapon_default_blaster";
-  const equipped=[loadout.ship_id,loadout.weapon_id,loadout.pilot_id].includes(x.id);
-  const s=x.stats||{};let desc=x.item_type==="ship"?("SPEED "+(s.speed||"—")+" · LIVES "+(s.lives||"—")):x.item_type==="weapon"?("DAMAGE "+(s.damage||"—")+" · FIRE "+(s.fireDelay||"—")+"s"):("ABILITY "+(s.ability||"—"));
-  return '<article class="item"><h3>'+x.name+'</h3><p>'+desc+'</p><p>'+price(x)+'</p><button class="action" data-id="'+x.id+'" data-action="'+(owned?"equip":"purchase")+'">'+(equipped?"EQUIPPED":owned?"EQUIP":"BUY")+'</button></article>';
- }).join("")+'</div>';
- modalContent.querySelectorAll("[data-action]").forEach(b=>b.onclick=async()=>{
-  if(b.textContent==="EQUIPPED")return;
-  try{const d=await apiAction(b.dataset.action,b.dataset.id);if(b.dataset.action==="purchase"){profile.crix=d.crix;profile.m_tokens=d.m_tokens;inventory.add(b.dataset.id);wallet()}else{loadout=d.loadout;renderLoadout()}catalog(type);toast("SYSTEM UPDATED")}catch(e){toast(e.message||"REQUEST FAILED")}
- });
-}
+function catalog(type){const arr=items.filter(x=>!type||x.item_type===type);modalContent.innerHTML='<div class="grid">'+arr.map(x=>{const owned=inventory.has(x.id)||x.id==="ship_default"||x.id==="weapon_default_blaster",equipped=[loadout.ship_id,loadout.weapon_id,loadout.pilot_id].includes(x.id),s=x.stats||{};let desc=x.item_type==="ship"?"SPEED "+(s.speed||"—")+" · LIVES "+(s.lives||"—"):x.item_type==="weapon"?"DAMAGE "+(s.damage||"—")+" · FIRE "+(s.fireDelay||"—")+"s":"ABILITY "+(s.ability||"—");return '<article class="item"><h3>'+x.name+'</h3><p>'+desc+'</p><p>'+price(x)+'</p><button class="action" data-id="'+x.id+'" data-action="'+(owned?"equip":"purchase")+'">'+(equipped?"EQUIPPED":owned?"EQUIP":"BUY")+'</button></article>'}).join("")+"</div>";modalContent.querySelectorAll("[data-action]").forEach(b=>b.onclick=async()=>{if(b.textContent==="EQUIPPED")return;try{const d=await apiAction(b.dataset.action,b.dataset.id);if(b.dataset.action==="purchase"){profile.crix=d.crix;profile.m_tokens=d.m_tokens;inventory.add(b.dataset.id);wallet()}else{loadout=d.loadout;renderLoadout()}catalog(type);toast("SYSTEM UPDATED")}catch(e){toast(e.message||"REQUEST FAILED")}})}
 function openModal(title){$("modalTitle").textContent=title;modal.classList.add("open")}
-function openView(view){
- document.querySelectorAll("[data-view]").forEach(b=>b.classList.toggle("active",b.dataset.view===view));
- if(view==="play"){modal.classList.remove("open");return}
- openModal(view.toUpperCase());
- if(view==="collection"){catalog("ship")}
- else if(view==="store"){catalog(null)}
- else if(view==="armory"){catalog("weapon")}
- else if(view==="missions"){modalContent.innerHTML='<div class="grid"><article class="item"><h3>SECTOR SURVIVAL</h3><p>Endless combat. Difficulty scales as your level rises.</p><button class="action" id="missionPlay">PLAY</button></article><article class="item"><h3>HULL PROTOCOL</h3><p>Hull reaching 0% immediately ends the mission.</p></article><article class="item"><h3>SAVE PROTOCOL</h3><p>Pause with ESC, then use SAVE + EXIT.</p></article></div>';$("missionPlay").onclick=()=>location.href="game.html"}
-}
-function codeTerminal(){
- openModal("CODE TERMINAL");
- modalContent.innerHTML='<article class="item"><h3>REDEEM MISSION CODE</h3><p>One redemption per code, per pilot.</p><input class="code" id="code" placeholder="ENTER CODE" maxlength="32"><button class="action" id="redeem" style="margin-top:10px">REDEEM</button><p id="result"></p></article>';
- $("redeem").onclick=async()=>{
-  const code=$("code").value.trim();if(!code){$("result").textContent="ENTER A CODE";return}
-  try{const {data:{session:s}}=await sb.auth.getSession();if(!s?.access_token)throw Error("SESSION EXPIRED");const {data,error}=await sb.functions.invoke("redeem-code",{body:{code},headers:{Authorization:"Bearer "+s.access_token}});if(error||!data?.ok)throw Error(data?.error||error?.message||"CODE REJECTED");profile.crix=data.crix;profile.m_tokens=data.m_tokens;wallet();$("result").textContent="REDEEMED // "+data.reward}catch(e){$("result").textContent=e.message||"REDEMPTION FAILED"}
- };
-}
-function profileModal(){
- openModal("PILOT PROFILE");
- const email=session?.user?.email||"—";
- const initial=(profile?.username||"P").slice(0,1).toUpperCase();
- modalContent.innerHTML='<div class="grid"><article class="item"><h3>'+((profile?.username||"PILOT").toUpperCase())+'</h3><p>EMAIL: '+email+'</p><p>₢ '+Number(profile?.crix||0).toLocaleString()+' Crix</p><p>◆ '+Number(profile?.m_tokens||0)+' M-Tokens</p></article><article class="item"><h3>LOADOUT</h3><p>SHIP: '+$("shipName").textContent+'</p><p>WEAPON: '+$("weaponName").textContent+'</p><p>PILOT: '+$("pilotLoad").textContent+'</p></article><article class="item"><h3>ACCOUNT</h3><p>AUTHENTICATED PILOT</p><button class="action" id="logout">SIGN OUT</button></article></div>';
- $("logout").onclick=async()=>{await sb.auth.signOut();location.replace("login.html")}
-}
-async function boot(){
- try{
-  if(!window.supabase?.createClient)throw Error("SUPABASE SDK FAILED TO LOAD");
-  const parsed=new globalThis.URL(CONFIG.supabaseUrl);
-  if(parsed.protocol!=="https:"||!parsed.hostname.endsWith(".supabase.co"))throw Error("SUPABASE URL INVALID");
-  sb=window.supabase.createClient(CONFIG.supabaseUrl.trim(),CONFIG.publishableKey.trim());
-  const q=await sb.auth.getSession();session=q.data.session;
-  if(!session){location.replace("login.html");return}
-  let p=await sb.from("player_profiles").select("*").eq("id",session.user.id).maybeSingle();
-  if(p.error)throw p.error;
-  if(!p.data){const name=session.user.user_metadata?.username||session.user.email?.split("@")[0]||"PILOT";p=await sb.from("player_profiles").insert({id:session.user.id,username:name,crix:10,m_tokens:0}).select("*").single()}
-  if(p.error)throw p.error;profile=p.data;
-  const iq=await sb.from("game_items").select("*").eq("is_shop_visible",true);if(iq.error)throw iq.error;items=iq.data||[];
-  const inv=await sb.from("player_inventory").select("item_id").eq("player_id",session.user.id);if(inv.error)throw inv.error;(inv.data||[]).forEach(x=>inventory.add(x.item_id));
-  const lo=await sb.from("player_loadouts").select("*").eq("player_id",session.user.id).maybeSingle();if(lo.error)throw lo.error;
-  if(lo.data)loadout=lo.data;else{const ins=await sb.from("player_loadouts").insert({player_id:session.user.id,ship_id:"ship_default",weapon_id:"weapon_default_blaster"}).select("*").single();if(ins.error)throw ins.error;loadout=ins.data}
-  $("pilot").textContent=(profile.username||"PILOT").toUpperCase();$("profile").textContent=(profile.username||"P").slice(0,1).toUpperCase();wallet();renderLoadout();
-  $("music").volume=.22;openView("play");
- }catch(e){console.error("LOBBY BOOT:",e);$("pilot").textContent="SYNC ERROR";toast("LOBBY ERROR // "+(e.message||"CHECK CONSOLE"))}
-}
-$("play").onclick=()=>location.href="game.html";
-$("profile").onclick=profileModal;
-$("codeOpen").onclick=codeTerminal;
-$("close").onclick=()=>modal.classList.remove("open");
-modal.onclick=e=>{if(e.target===modal)modal.classList.remove("open")};
-document.querySelectorAll("[data-view]").forEach(b=>b.onclick=()=>openView(b.dataset.view));
-boot();
+function openView(view){document.querySelectorAll("[data-view]").forEach(b=>b.classList.toggle("active",b.dataset.view===view));if(view==="play"){modal.classList.remove("open");return}openModal(view.toUpperCase());if(view==="collection")catalog("ship");else if(view==="store")catalog(null);else if(view==="armory")catalog("weapon");else if(view==="missions"){modalContent.innerHTML='<div class="grid"><article class="item"><h3>SECTOR SURVIVAL</h3><p>Endless combat. Difficulty scales as your level rises.</p><button class="action" id="missionPlay">PLAY</button></article><article class="item"><h3>HULL PROTOCOL</h3><p>Hull reaching 0% immediately ends the mission.</p></article><article class="item"><h3>SAVE PROTOCOL</h3><p>Pause with ESC, then use SAVE + EXIT.</p></article></div>';$("missionPlay").onclick=()=>location.href="game.html"}}
+function codeTerminal(){openModal("CODE TERMINAL");modalContent.innerHTML='<article class="item"><h3>REDEEM MISSION CODE</h3><p>One redemption per code, per pilot.</p><input class="code" id="code" placeholder="ENTER CODE" maxlength="32"><button class="action" id="redeem" style="margin-top:10px">REDEEM</button><p id="result"></p></article>';$("redeem").onclick=async()=>{const code=$("code").value.trim();if(!code){$("result").textContent="ENTER A CODE";return}try{const d=await gsmApi("redeem_code",{code});profile.crix=d.crix;profile.m_tokens=d.m_tokens;wallet();$("result").textContent="REDEEMED // "+JSON.stringify(d.reward)}catch(e){$("result").textContent=e.message||"REDEMPTION FAILED"}}}
+function profileModal(){openModal("TOUCAN PILOT PROFILE");const email=session?.user?.email||"—";modalContent.innerHTML='<div class="grid"><article class="item"><h3>'+((profile?.username||"PILOT").toUpperCase())+'</h3><p>TOUCAN EMAIL: '+email+'</p><p>₢ '+Number(profile?.crix||0).toLocaleString()+" Crix</p><p>◆ "+Number(profile?.m_tokens||0)+" M-Tokens</p></article><article class="item"><h3>LOADOUT</h3><p>SHIP: "+$("shipName").textContent+"</p><p>WEAPON: "+$("weaponName").textContent+"</p><p>PILOT: "+$("pilotLoad").textContent+'</p></article><article class="item"><h3>ACCOUNT</h3><p>MASTER ACCOUNT: TOUCAN GAMES</p><button class="action" id="logout">SIGN OUT</button></article></div>';$("logout").onclick=async()=>{await sb.auth.signOut();location.replace("login.html")}}
+async function boot(){try{const q=await sb.auth.getSession();session=q.data.session;if(!session){location.replace("login.html");return}const d=await gsmApi("bootstrap");profile=d.profile;items=d.items||[];inventory=new Set(d.inventory||[]);loadout=d.loadout||{};$("pilot").textContent=(profile.username||"PILOT").toUpperCase();$("profile").textContent=(profile.username||"P").slice(0,1).toUpperCase();wallet();renderLoadout();$("music").volume=.22;openView("play")}catch(e){console.error("LOBBY BOOT:",e);$("pilot").textContent="SYNC ERROR";toast("LOBBY ERROR // "+(e.message||"CHECK CONSOLE"))}}
+$("play").onclick=()=>location.href="game.html";$("profile").onclick=profileModal;$("codeOpen").onclick=codeTerminal;$("close").onclick=()=>modal.classList.remove("open");modal.onclick=e=>{if(e.target===modal)modal.classList.remove("open")};document.querySelectorAll("[data-view]").forEach(b=>b.onclick=()=>openView(b.dataset.view));boot();
 </script>
 </body>
 </html>

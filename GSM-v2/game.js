@@ -2,7 +2,7 @@
 const TOUCAN_URL="https://eylmduhkjrvpowvuejex.supabase.co",TOUCAN_KEY="sb_publishable_a23t-KV73iSoBA29igsnAQ_phuSvlEb";const GSM_URL="https://ccdllfswfhtgcolkugbz.supabase.co",GSM_KEY="sb_publishable_LPd-zxWUKM8c1p2P9sbbuA_EmhtqQr5";
 if(!window.supabase){document.getElementById("menu-info").textContent="Supabase failed to load. Open this page through Live Server (http://), not file://.";return}
 const sb=window.supabase.createClient(TOUCAN_URL,TOUCAN_KEY),$=id=>document.getElementById(id),canvas=$("game-canvas"),ctx=canvas.getContext("2d",{alpha:false});
-let W=0,H=0,state="START",last=0,user,profile,crix=10,score=0,xp=0,level=1,lives=3,kills=0,hullHp=100,hullMax=100,killFlash=0,killRotation=0,killHue=185,player,bullets=[],enemies=[],stars=[],sparks=[],spawn=0,fireClock=0,abilityClock=0,invuln=0,shieldClock=0,guardClock=0,overdriveClock=0,abilityFx={type:"",t:0},echoCharge=0,echoBlast=0,screenShake=0,novaTargeting=false,novaHole=null,orchidFlowerAngle=0,orchidSlash=null,haulClones=[],haulCloneFx=0,haulSlowClock=0,hydroWhiplash=null,hydroAura=0,left=false,right=false,fire=false,fpsFrames=0,fpsStamp=0,fpsValue=0,weapon={damage:25,delay:.22,dual:false,color:"#76ff03"},shipId="ship_default",shipDef={id:"ship_default",name:"GSM Scout",hp:100,speed:330,ability:"Pulse",color:"#00eaff"};
+let W=0,H=0,state="START",last=0,user,profile,crix=10,score=0,xp=0,level=1,lives=3,kills=0,hullHp=100,hullMax=100,killFlash=0,killRotation=0,killHue=185,player,bullets=[],enemies=[],stars=[],sparks=[],spawn=0,fireClock=0,abilityClock=0,invuln=0,shieldClock=0,guardClock=0,overdriveClock=0,abilityFx={type:"",t:0},echoCharge=0,echoBlast=0,screenShake=0,novaTargeting=false,novaHole=null,orchidFlowerAngle=0,orchidSlash=null,haulClones=[],haulCloneFx=0,haulSlowClock=0,hydroWhiplash=null,hydroAura=0,zedVortex=null,left=false,right=false,fire=false,fpsFrames=0,fpsStamp=0,fpsValue=0,weapon={damage:25,delay:.22,dual:false,color:"#76ff03"},shipId="ship_default",shipDef={id:"ship_default",name:"GSM Scout",hp:100,speed:330,ability:"Pulse",color:"#00eaff"};
 const music=new Audio("sounds/gameplay_music.flac");music.loop=true;music.volume=.28;const killBanner=$("kill-banner"),killCount=$("kill-count"),pauseOverlay=$("pause-overlay");const shell=$("game-container");
 async function gsmApi(action,body={}){if(!user?.access_token)throw Error("TOUCAN SESSION EXPIRED");const r=await fetch(GSM_URL+"/functions/v1/toucan-api",{method:"POST",headers:{apikey:GSM_KEY,Authorization:"Bearer "+user.access_token,"Content-Type":"application/json"},body:JSON.stringify({...body,action})});const d=await r.json().catch(()=>({}));if(!r.ok||d?.ok===false)throw Error(d?.error||"GAME SERVER REQUEST FAILED");return d}
 function musicOn(){music.play().catch(()=>{})}function sound(id){const a=$(id);if(!a)return;try{a.currentTime=0;a.play().catch(()=>{})}catch(e){}}
@@ -15,7 +15,7 @@ function xpNeed(l){return Math.floor(100*Math.pow(1.8,l-1))}function levelFor(x)
 async function boot(){try{const {data:{session}}=await sb.auth.getSession();if(!session){location.replace("login.html");return}user=session;const d=await gsmApi("bootstrap");profile=d.profile;crix=Number(profile.crix||0);level=Number(profile.level||1);const l=d.loadout||{};shipId=l.ship_id||"ship_default";const si=(d.items||[]).find(x=>x.id===shipId);if(si?.stats)shipDef={id:si.id,name:si.name,hp:Number(si.stats.hp||100),speed:Number(si.stats.speed||330),ability:si.stats.ability||"Pulse",color:si.stats.color||"#00eaff"};hullMax=shipDef.hp;const localHull=Number(localStorage.gsmHullHp);hullHp=Math.max(0,Math.min(hullMax,Number.isFinite(localHull)?Math.min(Number(d.hull_hp??hullMax),localHull):Number(d.hull_hp??hullMax)));localStorage.gsmHullHp=String(hullHp);const w=(d.items||[]).find(x=>x.id===l.weapon_id);if(w?.stats)weapon={damage:Number(w.stats.damage||25),delay:Number(w.stats.fireDelay||.22),dual:Boolean(w.stats.dual),color:"#76ff03"};resize();menu();draw()}
 catch(e){console.error(e);$("menu-info").textContent="Could not load mission data. Sign in through Toucan Games and try again."}}
 function menu(){ $("menu-title").textContent="MISSION READY";$("menu-info").innerHTML="V2 COMBAT SYSTEMS ONLINE<br><br><b>SHIP:</b> "+shipDef.name+" · <b>ABILITY:</b> "+shipDef.ability+"<br><b>WASD / ARROWS</b> move · <b>SPACE</b> fire · <b>E</b> ability<br>Enemies scale from your current level.<br><br>Level <b>"+level+"</b> · Weapon damage <b>"+weapon.damage+"</b> · Fire rate <b>"+(1/weapon.delay).toFixed(1)+"/s</b>"}
-function reset(){score=0;xp=0;lives=3;echoCharge=0;echoBlast=0;screenShake=0;novaTargeting=false;novaHole=null;orchidFlowerAngle=0;orchidSlash=null;haulClones=[];haulCloneFx=0;haulSlowClock=0;hydroWhiplash=null;hydroAura=0;kills=0;killFlash=0;killRotation=0;killHue=185;spawn=.4;fireClock=0;abilityClock=0;shieldClock=0;guardClock=0;overdriveClock=0;invuln=0;bullets=[];enemies=[];sparks=[];player={x:W/2,y:H-92,r:16,max:shipDef.hp,hp:hullHp};stars=Array.from({length:150},()=>({x:Math.random()*W,y:Math.random()*H,s:.4+Math.random()*1.5,v:15+Math.random()*45}));hud()}
+function reset(){score=0;xp=0;lives=3;echoCharge=0;echoBlast=0;screenShake=0;novaTargeting=false;novaHole=null;orchidFlowerAngle=0;orchidSlash=null;haulClones=[];haulCloneFx=0;haulSlowClock=0;hydroWhiplash=null;hydroAura=0;zedVortex=null;kills=0;killFlash=0;killRotation=0;killHue=185;spawn=.4;fireClock=0;abilityClock=0;shieldClock=0;guardClock=0;overdriveClock=0;invuln=0;bullets=[];enemies=[];sparks=[];player={x:W/2,y:H-92,r:16,max:shipDef.hp,hp:hullHp};stars=Array.from({length:150},()=>({x:Math.random()*W,y:Math.random()*H,s:.4+Math.random()*1.5,v:15+Math.random()*45}));hud()}
 function hud(){$("score-display").textContent=score;$("level-display").textContent=level;$("lives-display").textContent=lives;$("cret-display").textContent=Math.floor(crix);$("xp-display").textContent=xp;$("next-xp-display").textContent=nextLevelXp(level);const hpPct=Math.max(0,player?player.hp/player.max*100:100);$("player-hp-fill").style.width=hpPct+"%";$("hull-readout").textContent=Math.round(hpPct)+"%";$("ability-readout").textContent=abilityClock>0?abilityClock.toFixed(1)+"s":"READY";$("ability-bar-fill").style.width=Math.max(0,(1-abilityClock/8)*100)+"%"}
 function toast(t){const el=$("temp-message-container");el.textContent=t;el.classList.add("show");clearTimeout(toast.t);toast.t=setTimeout(()=>el.classList.remove("show"),1100)}
 function scheduleLoop(){if(settings.vsync)requestAnimationFrame(loop);else setTimeout(()=>loop(performance.now()),0)}function launch(){if(hullHp<hullMax){toast("WORKSTATION REQUIRED // REPAIR HULL FIRST");location.href="workstation.html";return}reset();state="RUNNING";pauseOverlay.style.display="none";$("message-box").style.display="none";musicOn();last=performance.now();fpsStamp=last;fpsFrames=0;scheduleLoop()}
@@ -28,7 +28,14 @@ function ability(){if(state!=="RUNNING"||abilityClock>0)return;abilityClock=ship
   else if(shipId==="ship_orchid"){orchidSlash={x:player.x,y:player.y-35,t:0,hit:new Set()};toast("FLOWER SLASH // RELEASED")}
   else if(shipId==="ship_haul"){haulClones=[];for(let side of [-1,1])for(let i=1;i<=3;i++)haulClones.push({x:player.x+side*i*34,y:player.y+18+i*8,vy:720,t:0,hit:new Set()});haulCloneFx=1.15;haulSlowClock=3.5;screenShake=.28;toast("RAMPAGE // SIX CLONES DEPLOYED")}
   else if(shipId==="ship_hydro"){hydroAura=1.15;hydroWhiplash={t:0,hit:new Set()};screenShake=.08;toast("HYDRO WHIPLASH // RELEASED")}
-  else if(shipId==="ship_zed_black"){for(const e of enemies)e.hp=0;toast("VOID COLLAPSE // PURGED")}
+  else if(shipId==="ship_zed_black"){
+  const vx=player.x,vy=player.y-34;
+  const targets=enemies.filter(e=>Math.hypot(e.x-vx,e.y-vy)<300);
+  zedVortex={x:vx,y:vy,t:2.35,phase:"pull",targets,offsets:new Map()};
+  for(const e of targets)zedVortex.offsets.set(e,{x:e.x-vx,y:e.y-vy});
+  screenShake=.18;
+  toast("VOID VORTEX // SWALLOWING");
+}
   else if(shipId==="ship_vite"){overdriveClock=8;toast("OVERDRIVE // FIRE RATE x2")}
   else if(shipId==="ship_moraine"){guardClock=8;toast("MORAINE GUARD // DAMAGE REDUCED")}
   else {for(const e of enemies)e.hp-=weapon.damage*3;toast("ECHO PULSE // IMPACT")}
@@ -72,6 +79,51 @@ function resolveNovaHole(){
 }
 function damage(n){if(invuln>0||shieldClock>0||state!=="RUNNING")return;invuln=.6;sound("hullDamage");if(guardClock>0)n*=.45;player.hp=Math.max(0,player.hp-n);hullHp=Math.max(0,player.hp);localStorage.gsmHullHp=String(hullHp);if(player.hp<=0){lives=0;hud();finish();return}hud()}
 function update(dt){killFlash=Math.max(0,killFlash-dt);const wasEcho=echoCharge>0;if(echoCharge>0){echoCharge=Math.max(0,echoCharge-dt);if(wasEcho&&echoCharge===0){for(const e of enemies.slice(0,4)){e.hp-=weapon.damage*8;if(e.hp<=0){score+=e.score;kills++;killFlash=.42;killRotation=(killRotation+37)%360;killHue=(killHue+47)%360;burst(e.x,e.y,e.c)}}echoBlast=0.7;screenShake=.42;toast("ECHO BURST // ALL TARGETS HIT")}}echoBlast=Math.max(0,echoBlast-dt);screenShake=Math.max(0,screenShake-dt);if(novaHole){novaHole.t=Math.max(0,novaHole.t-dt);for(const e of novaHole.targets){if(e.hp<=0)continue;const dx=novaHole.x-e.x,dy=novaHole.y-e.y,d=Math.max(1,Math.hypot(dx,dy));const pull=Math.min(300*dt,d);e.x+=dx/d*pull;e.y+=dy/d*pull}if(novaHole.t===0)resolveNovaHole()}
+if(zedVortex){
+  zedVortex.t=Math.max(0,zedVortex.t-dt);
+  const elapsed=2.35-zedVortex.t;
+  if(zedVortex.phase==="pull"){
+    for(const e of zedVortex.targets){
+      if(e.hp<=0)continue;
+      const dx=zedVortex.x-e.x,dy=zedVortex.y-e.y,d=Math.max(1,Math.hypot(dx,dy));
+      const pull=Math.min(360*dt,d);
+      e.x+=dx/d*pull;e.y+=dy/d*pull;
+      e.hp-=weapon.damage*2.8*dt;
+    }
+    if(elapsed>=1.15){
+      zedVortex.phase="scatter";zedVortex.t=0.55;screenShake=.32;
+      for(const e of zedVortex.targets){
+        if(e.hp<=0)continue;
+        const o=zedVortex.offsets.get(e)||{x:0,y:0},d=Math.max(1,Math.hypot(o.x,o.y));
+        e.x=zedVortex.x+o.x/d*70;e.y=zedVortex.y+o.y/d*70;
+      }
+      toast("VOID VORTEX // SCATTER");
+    }
+  }else if(zedVortex.phase==="scatter"){
+    const p=1-zedVortex.t/.55;
+    for(const e of zedVortex.targets){
+      if(e.hp<=0)continue;
+      const o=zedVortex.offsets.get(e)||{x:0,y:-1},d=Math.max(1,Math.hypot(o.x,o.y));
+      const push=260*p*dt;
+      e.x+=o.x/d*push;e.y+=o.y/d*push;
+    }
+    if(zedVortex.t===0){
+      zedVortex.phase="explode";zedVortex.t=.55;screenShake=.48;
+      toast("VOID VORTEX // DETONATION");
+    }
+  }else if(zedVortex.phase==="explode"){
+    if(zedVortex.t===0){
+      for(const e of enemies){
+        if(e.hp<=0)continue;
+        score+=e.score;kills++;burst(e.x,e.y,e.c);
+      }
+      enemies.forEach(e=>e.hp=0);
+      killFlash=.6;screenShake=.55;
+      toast("VOID DETONATION // ALL TARGETS DESTROYED");
+      zedVortex=null;
+    }
+  }
+}
 abilityFx.t=Math.max(0,abilityFx.t-dt);if(hydroAura>0)hydroAura=Math.max(0,hydroAura-dt);if(hydroWhiplash){hydroWhiplash.t+=dt;const reach=Math.min(520,hydroWhiplash.t*1250);for(const e of enemies){if(hydroWhiplash.hit.has(e))continue;const dx=e.x-player.x,dy=e.y-player.y;const forward=player.y-e.y;if(forward<20||forward>reach)continue;const lateral=Math.abs(dx-(Math.sin(hydroWhiplash.t*8.5)*105));if(lateral<58){hydroWhiplash.hit.add(e);e.hp-=weapon.damage*2.2;screenShake=Math.max(screenShake,.16);burst(e.x,e.y,"#36a9ff");if(e.hp<=0){score+=e.score;kills++;killFlash=.42;killRotation=(killRotation+37)%360;killHue=(killHue+47)%360;killCount.textContent=kills;killBanner.style.color="hsl("+killHue+" 100% 70%)";showKillRing();toast("+"+e.score+" SCORE")}}}if(reach>=520)hydroWhiplash=null;}if(abilityFx.t===0)abilityFx.type="";shieldClock=Math.max(0,shieldClock-dt);guardClock=Math.max(0,guardClock-dt);overdriveClock=Math.max(0,overdriveClock-dt);if(left)player.x-=shipDef.speed*dt;if(right)player.x+=shipDef.speed*dt;player.x=Math.max(22,Math.min(W-22,player.x));if(fire)shoot();fireClock=Math.max(0,fireClock-dt);abilityClock=Math.max(0,abilityClock-dt);invuln=Math.max(0,invuln-dt);spawn-=dt;if(spawn<=0){spawnEnemy();spawn=Math.max(.22,1.05/(1+level*.05))}for(const b of bullets)b.y-=b.v*dt;bullets=bullets.filter(b=>b.y>-30);
 if(haulSlowClock>0)haulSlowClock=Math.max(0,haulSlowClock-dt);if(haulClones.length){haulCloneFx=Math.max(0,haulCloneFx-dt);for(const cl of haulClones){cl.t+=dt;cl.y-=cl.vy*dt;for(const e of enemies){if(cl.hit.has(e))continue;if(Math.hypot(e.x-cl.x,e.y-cl.y)<54){cl.hit.add(e);e.hp-=weapon.damage*5;screenShake=Math.max(screenShake,.32);burst(e.x,e.y,e.c);if(e.hp<=0){score+=e.score;kills++;killFlash=.42;killRotation=(killRotation+37)%360;killHue=(killHue+47)%360;killCount.textContent=kills;killBanner.style.color="hsl("+killHue+" 100% 70%)";showKillRing();toast("+"+e.score+" SCORE")}}}}haulClones=haulClones.filter(cl=>cl.y>-100)}
 
@@ -97,6 +149,40 @@ function ship(x,y){ctx.save();ctx.translate(x,y);if(abilityFx.type==="ship_orchi
 function enemy(e){ctx.save();ctx.translate(e.x,e.y);ctx.rotate(Math.PI);ctx.shadowBlur=14;ctx.shadowColor=e.c;ctx.fillStyle=e.c;ctx.beginPath();ctx.moveTo(0,-e.r*1.2);ctx.lineTo(e.r,e.r*.7);ctx.lineTo(0,e.r*.35);ctx.lineTo(-e.r,e.r*.7);ctx.closePath();ctx.fill();ctx.restore();ctx.shadowBlur=0;const w=e.r*2.5;ctx.fillStyle="#19070b";ctx.fillRect(e.x-w/2,e.y-e.r-8,w,3);ctx.fillStyle="#ff405d";ctx.fillRect(e.x-w/2,e.y-e.r-8,w*Math.max(0,e.hp/e.max),3)}
 function draw(){ctx.save();if(screenShake>0){const mag=screenShake/.42*14;ctx.translate((Math.random()-.5)*mag,(Math.random()-.5)*mag)}ctx.fillStyle="#02040a";ctx.fillRect(-20,-20,W+40,H+40);for(const s of stars){s.y+=s.v/60;if(s.y>H)s.y=0;ctx.fillStyle="rgba(255,255,255,.65)";ctx.fillRect(s.x,s.y,s.s,s.s)}for(const p of sparks){p.x+=p.vx/60;p.y+=p.vy/60;p.t-=.018;ctx.globalAlpha=Math.max(0,p.t/.35);ctx.fillStyle=p.c;ctx.fillRect(p.x,p.y,3,3)}ctx.globalAlpha=1;sparks=sparks.filter(p=>p.t>0);for(const b of bullets){ctx.fillStyle=weapon.color;ctx.shadowBlur=9;ctx.shadowColor=weapon.color;ctx.fillRect(b.x-2,b.y-8,4,13)}ctx.shadowBlur=0;for(const e of enemies)enemy(e);if(player)ship(player.x,player.y);if(shipId==="ship_echo"&&echoCharge>0&&player){ctx.save();const p=1-echoCharge/1.8;const r=8+p*42;const y=player.y-62-p*5;ctx.globalAlpha=.35+.65*p;ctx.shadowBlur=25+p*35;ctx.shadowColor="#39d9ff";ctx.fillStyle="#39d9ff";ctx.beginPath();ctx.arc(player.x,y,r,0,Math.PI*2);ctx.fill();ctx.globalAlpha=.5;ctx.strokeStyle="#b8f4ff";ctx.lineWidth=3;ctx.beginPath();ctx.arc(player.x,y,r+8+Math.sin(p*18)*3,0,Math.PI*2);ctx.stroke();ctx.restore()}if(shipId==="ship_echo"&&echoBlast>0&&player){ctx.save();const p=1-echoBlast/.7;ctx.globalAlpha=Math.max(0,1-p);ctx.strokeStyle="#39d9ff";ctx.shadowBlur=35;ctx.shadowColor="#39d9ff";ctx.lineWidth=10*(1-p)+3;ctx.beginPath();ctx.arc(player.x,player.y-62,Math.max(20,p*380),0,Math.PI*2);ctx.stroke();ctx.restore()}if(orchidSlash){ctx.save();const p=Math.min(1,orchidSlash.t/.65);ctx.translate(orchidSlash.x,orchidSlash.y);ctx.rotate(-.18);ctx.globalAlpha=Math.max(0,1-p*.75);ctx.shadowBlur=32;ctx.shadowColor="#ff67c8";ctx.strokeStyle="#ff67c8";ctx.lineWidth=18;ctx.beginPath();ctx.arc(0,0,76,Math.PI*1.08,Math.PI*1.92);ctx.stroke();ctx.strokeStyle="#ffe6f7";ctx.lineWidth=5;ctx.beginPath();ctx.arc(0,0,76,Math.PI*1.08,Math.PI*1.92);ctx.stroke();ctx.restore()}
 if(novaHole){ctx.save();const p=1-novaHole.t/1.25;const r=28+p*72;ctx.globalAlpha=.92;ctx.fillStyle="#050009";ctx.shadowBlur=35;ctx.shadowColor="#9b4dff";ctx.beginPath();ctx.arc(novaHole.x,novaHole.y,r,0,Math.PI*2);ctx.fill();ctx.globalAlpha=.75;ctx.strokeStyle="#b56cff";ctx.lineWidth=5;ctx.beginPath();ctx.arc(novaHole.x,novaHole.y,r+10+Math.sin(p*20)*5,0,Math.PI*2);ctx.stroke();ctx.globalAlpha=.5;ctx.strokeStyle="#fff";ctx.lineWidth=2;ctx.beginPath();ctx.arc(novaHole.x,novaHole.y,Math.max(10,r*.45),0,Math.PI*2);ctx.stroke();for(let i=0;i<8;i++){const a=i*Math.PI/4+p*7;const rr=r+22;ctx.beginPath();ctx.moveTo(novaHole.x+Math.cos(a)*rr,novaHole.y+Math.sin(a)*rr);ctx.lineTo(novaHole.x+Math.cos(a)*rr*.55,novaHole.y+Math.sin(a)*rr*.55);ctx.stroke()}ctx.restore()}
+if(zedVortex){
+  ctx.save();
+  const p=zedVortex.phase==="pull"?Math.min(1,(1.15-zedVortex.t)/1.15):zedVortex.phase==="scatter"?1:1+(zedVortex.t/.55)*.35;
+  const maxR=zedVortex.phase==="explode"?210:145;
+  const r=28+p*maxR;
+  ctx.globalCompositeOperation="lighter";
+  ctx.shadowBlur=45;ctx.shadowColor="#090909";
+  for(let i=0;i<4;i++){
+    ctx.globalAlpha=.22+.12*i;
+    ctx.strokeStyle=i%2?"#25252b":"#000";
+    ctx.lineWidth=12-i*2;
+    ctx.beginPath();ctx.arc(zedVortex.x,zedVortex.y,r-i*18,0,Math.PI*2);ctx.stroke();
+  }
+  ctx.globalCompositeOperation="source-over";
+  ctx.globalAlpha=.96;
+  const grad=ctx.createRadialGradient(zedVortex.x,zedVortex.y,2,zedVortex.x,zedVortex.y,r*.72);
+  grad.addColorStop(0,"#000");grad.addColorStop(.55,"#010105");grad.addColorStop(.82,"#111118");grad.addColorStop(1,"rgba(0,0,0,0)");
+  ctx.fillStyle=grad;ctx.beginPath();ctx.arc(zedVortex.x,zedVortex.y,r,0,Math.PI*2);ctx.fill();
+  for(let i=0;i<18;i++){
+    const a=i*Math.PI*2/18+performance.now()/700*(i%2?1:-1);
+    const rr=r*.72+Math.sin(performance.now()/180+i)*12;
+    ctx.strokeStyle=i%2?"#555563":"#17171d";ctx.lineWidth=2+Math.sin(i)*1.5;
+    ctx.globalAlpha=.35+.25*Math.sin(i+performance.now()/220);
+    ctx.beginPath();ctx.arc(zedVortex.x,zedVortex.y,rr,a,a+1.25);ctx.stroke();
+  }
+  if(zedVortex.phase==="explode"){
+    const ep=1-zedVortex.t/.55;
+    ctx.globalAlpha=Math.max(0,1-ep);
+    ctx.strokeStyle="#fff";ctx.shadowBlur=50;ctx.shadowColor="#fff";ctx.lineWidth=18;
+    ctx.beginPath();ctx.arc(zedVortex.x,zedVortex.y,40+ep*300,0,Math.PI*2);ctx.stroke();
+    ctx.globalAlpha=Math.max(0,1-ep*.8);ctx.fillStyle="#000";ctx.beginPath();ctx.arc(zedVortex.x,zedVortex.y,Math.max(8,r*(1-ep)),0,Math.PI*2);ctx.fill();
+  }
+  ctx.restore();
+}
 if(abilityFx.type==="ship_zed_black"&&abilityFx.t>0){ctx.save();ctx.fillStyle="rgba(255,255,255,"+Math.min(.75,abilityFx.t*.55)+")";ctx.fillRect(0,0,W,H);ctx.fillStyle="rgba(0,0,0,"+Math.min(.55,(1.8-abilityFx.t)*.3)+")";ctx.fillRect(0,0,W,H);ctx.restore()}if(abilityFx.type==="ship_orchid"&&abilityFx.t>0){ctx.save();ctx.globalAlpha=Math.min(.8,abilityFx.t);ctx.strokeStyle="#ff67c8";ctx.lineWidth=5;ctx.beginPath();ctx.arc(player.x,player.y,30+(1.8-abilityFx.t)*28,0,Math.PI*2);ctx.stroke();ctx.restore()}if(shipId==="ship_hydro"&&hydroAura>0){ctx.save();const p=1-hydroAura/1.15;ctx.globalAlpha=.10+.18*(1-p);ctx.shadowBlur=30;ctx.shadowColor="#36a9ff";ctx.strokeStyle="#36a9ff";ctx.lineWidth=3+4*(1-p);ctx.beginPath();ctx.arc(player.x,player.y,30+14*Math.sin(p*Math.PI),0,Math.PI*2);ctx.stroke();ctx.globalAlpha=.16;ctx.lineWidth=1;ctx.beginPath();ctx.arc(player.x,player.y,43+10*p,0,Math.PI*2);ctx.stroke();ctx.restore()}if(hydroWhiplash){ctx.save();const p=Math.min(1,hydroWhiplash.t/.37);const len=Math.min(520,hydroWhiplash.t*1250);ctx.globalAlpha=Math.max(0,1-p);ctx.shadowBlur=26;ctx.shadowColor="#36a9ff";ctx.strokeStyle="#72d4ff";ctx.lineWidth=8-4*p;ctx.beginPath();ctx.moveTo(player.x,player.y-15);ctx.quadraticCurveTo(player.x+Math.sin(hydroWhiplash.t*8.5)*105,player.y-len*.48,player.x+Math.sin(hydroWhiplash.t*10)*35,player.y-len);ctx.stroke();ctx.strokeStyle="#d7f5ff";ctx.lineWidth=2;ctx.stroke();ctx.restore()}if(abilityFx.type==="ship_vite"&&abilityFx.t>0){ctx.save();ctx.globalAlpha=.35;ctx.strokeStyle="#ffe14a";for(let i=0;i<8;i++){ctx.beginPath();ctx.moveTo(player.x-80+i*20,player.y+30);ctx.lineTo(player.x-120+i*35,player.y+80);ctx.stroke()}ctx.restore()}ctx.restore();if(killFlash>0){ctx.save();ctx.globalAlpha=Math.min(.34,killFlash*.8);ctx.strokeStyle=`hsl(${killHue} 100% 65%)`;ctx.lineWidth=6;ctx.shadowBlur=24;ctx.shadowColor=ctx.strokeStyle;ctx.strokeRect(3,3,W-6,H-6);ctx.restore()}const shell=$("game-container");shell.style.setProperty("--kill-hue",killHue);if(settings?.fps){let f=$("fps-runtime");if(!f){f=document.createElement("div");f.id="fps-runtime";f.style="position:absolute;right:14px;bottom:10px;z-index:16;color:#6effa8;font:700 10px Orbitron";shell.appendChild(f)}f.textContent="FPS: "+fpsValue;f.style.display="block"}else{const f=$("fps-runtime");if(f)f.style.display="none"}}
 function loop(t){if(state!=="RUNNING")return;const dt=Math.min(.033,(t-last)/1000);last=t;update(dt);draw();fpsFrames++;if(t-fpsStamp>=500){fpsValue=Math.round(fpsFrames*1000/(t-fpsStamp));fpsFrames=0;fpsStamp=t;const sf=$("side-fps");if(sf)sf.textContent=fpsValue}scheduleLoop()}
 function hold(id,set){const b=$(id),on=e=>{e.preventDefault();set(true);musicOn()},off=e=>{e.preventDefault();set(false)};b.addEventListener("pointerdown",on);b.addEventListener("pointerup",off);b.addEventListener("pointercancel",off);b.addEventListener("pointerleave",off)}

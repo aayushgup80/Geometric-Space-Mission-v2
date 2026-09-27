@@ -12,18 +12,18 @@ body{background:radial-gradient(circle at 52% 38%,#292d32 0,#17191d 28%,#0b0d10 
 body:before{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(120deg,transparent 0 42%,#ff46540a 42.2% 42.6%,transparent 42.8%),radial-gradient(circle at 70% 45%,#ff46540d,transparent 34%)}
 .shell{position:relative;z-index:5;height:100%;pointer-events:auto}
 .top{height:76px;display:flex;align-items:center;padding:0 30px;border-bottom:1px solid #ffffff12;background:#0a0c0fef}
-.logo{font:900 17px Orbitron;letter-spacing:.14em}.logo span{color:#ff4655}.logo small{display:block;color:#737982;font:700 7px Inter;letter-spacing:.34em;margin-top:5px}
+.logo{font:900 17px Orbitron;letter-spacing:.14em}.overhaul{font:900 8px Orbitron;color:#ff5361;letter-spacing:.24em;margin-left:12px;padding:6px 9px;border:1px solid #ff465533;background:#ff465508}.logo span{color:#ff4655}.logo small{display:block;color:#737982;font:700 7px Inter;letter-spacing:.34em;margin-top:5px}
 .iconbar{display:flex;align-items:center;gap:7px;margin-left:42px;height:100%}
 .icon{position:relative;text-decoration:none;width:48px;height:48px;border:1px solid transparent;background:transparent;color:#7d838a;display:grid;place-items:center;font-size:18px;transition:.15s}
 .icon span{position:absolute;bottom:4px;font:800 7px Inter;letter-spacing:.1em}
-.icon:hover,.icon.active{color:#fff;background:#ffffff07;border-color:#ffffff14}.icon.active:after{content:"";position:absolute;left:8px;right:8px;bottom:-15px;height:2px;background:#ff4655}
+.icon:hover,.icon.active{color:#fff;background:#ffffff07;border-color:#ffffff14}.patch-btn{margin-left:8px;padding:9px 11px;border:1px solid #00eaff28;background:#071217;color:#72eaff;text-decoration:none;font:900 8px Orbitron;letter-spacing:.12em;transition:.15s}.patch-btn:hover{border-color:#00eaff88;background:#00eaff0c;transform:translateY(-1px)}.icon.active:after{content:"";position:absolute;left:8px;right:8px;bottom:-15px;height:2px;background:#ff4655}
 .account{margin-left:auto;display:flex;align-items:center;gap:13px}.wallet{font:800 10px Inter;color:#777f88}.wallet b{font:900 13px Orbitron;margin-left:4px}.crix{color:#ffd34f}.token{color:#b98cff}
 .avatar{width:42px;height:42px;border:1px solid #ffffff24;background:#15181c;color:#fff;font:900 15px Orbitron}.avatar:hover{border-color:#ff4655}
 .main{height:calc(100% - 76px);display:grid;grid-template-columns:250px 1fr 250px;gap:18px;padding:18px 30px}
 .card{border:1px solid #ffffff12;background:#111419e8;box-shadow:0 20px 60px #0009;position:relative}.card:before{content:"";position:absolute;left:0;top:0;width:38px;height:2px;background:#ff4655}
 .left,.right{display:flex;flex-direction:column;gap:14px}.panel{padding:18px}.label{font:800 8px Inter;color:#737a83;letter-spacing:.2em}.name{font:900 22px Orbitron;margin:10px 0 16px;word-break:break-word}.sub{color:#7f8790;font-size:10px;line-height:1.6}.stat{display:flex;justify-content:space-between;padding:9px 0;border-top:1px solid #ffffff0a;color:#737a83;font-size:9px}.stat b{color:#e9eaeb;font:800 9px Orbitron}.online{color:#65e9a0!important}.gold{color:#ffd34f!important}
 .center{position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;border:1px solid #ffffff10;background:radial-gradient(circle at 50% 45%,#45494d 0,#25292e 22%,#101317 64%,#0b0d10 100%);box-shadow:inset 0 0 130px #000b}.center:before{content:"";position:absolute;width:520px;height:520px;border:1px solid #ffffff10;border-radius:50%;box-shadow:0 0 0 85px #ffffff02,0 0 0 170px #ffffff01;pointer-events:none}.center:after{content:"";position:absolute;inset:0;background:linear-gradient(transparent 49.8%,#ff465407 50%,transparent 50.2%),linear-gradient(90deg,transparent 49.8%,#ff465407 50%,transparent 50.2%);pointer-events:none}
-.hero{text-align:center;position:relative;z-index:2}.kicker{font:800 9px Inter;color:#ff5361;letter-spacing:.28em}.hero h1{font:900 clamp(36px,5vw,62px) Orbitron;margin:13px 0 5px;letter-spacing:.05em}.hero p{color:#888f97;font-size:10px;letter-spacing:.1em;margin:0 0 28px}
+.hero{text-align:center;position:relative;z-index:2}.boot-loader{position:absolute;inset:0;z-index:20;display:grid;place-items:center;background:radial-gradient(circle at center,#20262d 0,#0d1014 62%,#080a0d 100%);transition:opacity .35s,visibility .35s}.boot-loader.hide{opacity:0;visibility:hidden;pointer-events:none}.loader-core{text-align:center}.loader-ring{width:58px;height:58px;margin:0 auto 18px;border:2px solid #ffffff12;border-top-color:#ff4655;border-right-color:#ff465566;border-radius:50%;animation:lspin .8s linear infinite;box-shadow:0 0 30px #ff465522}.loader-bars{display:flex;justify-content:center;gap:4px;margin-top:13px}.loader-bars i{display:block;width:4px;height:14px;background:#ff4655;animation:lbar .8s ease-in-out infinite}.loader-bars i:nth-child(2){animation-delay:.1s}.loader-bars i:nth-child(3){animation-delay:.2s}.loader-bars i:nth-child(4){animation-delay:.3s}.loader-bars i:nth-child(5){animation-delay:.4s}.mini-loader{display:inline-block;width:18px;height:18px;border:2px solid #ffffff12;border-top-color:#ff4655;border-radius:50%;vertical-align:middle;animation:lspin .7s linear infinite}.loader-caption{font:900 9px Orbitron;letter-spacing:.25em;color:#e8ebee}.loader-sub{margin-top:7px;color:#656d76;font:700 7px Inter;letter-spacing:.2em}@keyframes lspin{to{transform:rotate(360deg)}}@keyframes lbar{0%,100%{transform:scaleY(.45);opacity:.35}50%{transform:scaleY(1.2);opacity:1}}.kicker{font:800 9px Inter;color:#ff5361;letter-spacing:.28em}.hero h1{font:900 clamp(36px,5vw,62px) Orbitron;margin:13px 0 5px;letter-spacing:.05em}.hero p{color:#888f97;font-size:10px;letter-spacing:.1em;margin:0 0 28px}
 .play{width:300px;height:64px;border:0;background:#ff4655;color:#fff;clip-path:polygon(0 0,94% 0,100% 50%,94% 100%,0 100%);font:900 15px Orbitron;letter-spacing:.16em;box-shadow:0 20px 60px #ff465530;transition:.16s}.play:hover{filter:brightness(1.1);transform:translateY(-2px)}
 .hint{margin-top:18px;color:#676e77;font:700 8px Inter;letter-spacing:.2em}
 .action{width:100%;padding:10px;border:1px solid #ffffff18;background:#171b20;color:#ddd;font:800 9px Orbitron}.action:hover{border-color:#ff4655;color:#fff}.code{width:100%;height:48px;background:#080a0d;border:1px solid #ffffff18;color:#fff;padding:0 12px;outline:none}.code:focus{border-color:#ff4655}.corner{position:absolute;z-index:3;left:18px;bottom:18px;color:#666e77;font:800 8px Inter;letter-spacing:.16em}.corner.right{left:auto;right:18px}
@@ -35,13 +35,13 @@ body:before{content:"";position:absolute;inset:0;pointer-events:none;background:
 <body>
 <main class="shell">
 <header class="top">
-  <div class="logo"><span>GSM</span> // V2<small>GEOMETRIC SPACE MISSION</small></div>
+  <div class="logo"><span>GSM</span> // V2<small>GEOMETRIC SPACE MISSION</small></div><div class="overhaul">OVERHAUL 1</div>
   <nav class="iconbar">
     <a class="icon active" href="lobby.html" title="Play">▶<span>PLAY</span></a>
     <a class="icon" href="inventory.html" title="Inventory">▣<span>INV</span></a>
     <a class="icon" href="store.html" title="Daily Store">◇<span>STORE</span></a>
     <a class="icon" href="marketplace.html" title="Marketplace">◆<span>MARKET</span></a>
-    <a class="icon" href="missions.html" title="Missions">◈<span>MISSIONS</span></a>
+    <a class="icon" href="missions.html" title="Missions">◈<span>MISSIONS</span></a><a class="patch-btn" href="patch_notes.html">PATCH 1.1</a>
   </nav>
   <div class="account">
     <div class="wallet">₢ <b class="crix" id="crix">0</b></div>
@@ -53,7 +53,7 @@ body:before{content:"";position:absolute;inset:0;pointer-events:none;background:
   <aside class="left">
     <div class="card panel">
       <div class="label">PILOT PROFILE</div>
-      <div class="name" id="pilot">LOADING</div>
+      <div class="name" id="pilot"><span class="mini-loader"></span></div>
       <div class="stat"><span>STATUS</span><b class="online">ONLINE</b></div>
       <div class="stat"><span>AUTH</span><b>SECURE</b></div>
       <div class="stat"><span>DATABASE</span><b class="online">SYNCED</b></div><div class="stat"><span>LEVEL</span><b id="level-display">1</b></div><div class="stat"><span>XP</span><b id="xp-display">0/300</b></div>
@@ -65,7 +65,7 @@ body:before{content:"";position:absolute;inset:0;pointer-events:none;background:
       <div class="stat"><span>PILOT</span><b id="pilotLoad">NONE</b></div>
     </div>
   </aside>
-  <section class="center">
+  <section class="center"><div class="boot-loader" id="boot-loader"><div class="loader-core"><div class="loader-ring"></div><div class="loader-caption">INITIALIZING MISSION CONTROL</div><div class="loader-sub">SYNCING LOADOUT · SYSTEMS · PILOT DATA</div><div class="loader-bars"><i></i><i></i><i></i><i></i><i></i></div></div></div>
     <div class="hero">
       <div class="kicker">MISSION CONTROL // SECTOR 01</div>
       <h1>READY FOR COMBAT</h1>
@@ -141,7 +141,7 @@ function applyBoot(d){
   profile=d.profile||{};items=d.items||[];inventory=new Set(d.inventory||[]);loadout=d.loadout||{};
   $("pilot").textContent=(profile.username||"PILOT").toUpperCase();
   $("profile").textContent=(profile.username||"P").slice(0,1).toUpperCase();
-  wallet();renderLoadout();$("level-display").textContent=Number(profile.level||1);$("xp-display").textContent=Number(profile.xp||0)+"/"+nextLevelXp(Number(profile.level||1));$("next-level-display").textContent=nextLevelXp(Number(profile.level||1)).toLocaleString()+" XP";$("music").volume=.22;openView("play");
+  wallet();renderLoadout();$("boot-loader")?.classList.add("hide");$("level-display").textContent=Number(profile.level||1);$("xp-display").textContent=Number(profile.xp||0)+"/"+nextLevelXp(Number(profile.level||1));$("next-level-display").textContent=nextLevelXp(Number(profile.level||1)).toLocaleString()+" XP";$("music").volume=.22;openView("play");
 }
 async function boot(){
   try{
